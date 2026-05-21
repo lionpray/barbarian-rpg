@@ -1,0 +1,2665 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>게임 속 바바리안으로 살아남기</title>
+<style>
+:root{--bg:#0d0d0d;--panel:#1a1a1a;--border:#2e2e2e;--gold:#c9a84c;--red:#c0392b;--green:#27ae60;--blue:#2980b9;--purple:#8e44ad;--text:#e0d5c1;--muted:#7f7f7f;--rage:#e67e22;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Malgun Gothic','맑은 고딕',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+header{background:linear-gradient(180deg,#1a0a00,#0d0d0d);border-bottom:2px solid var(--gold);padding:12px 20px;text-align:center;}
+header h1{color:var(--gold);font-size:1.4em;letter-spacing:2px;text-shadow:0 0 10px rgba(201,168,76,.5);}
+header .sub{color:var(--muted);font-size:.75em;margin-top:2px;}
+#gc{display:flex;flex:1;max-width:1300px;width:100%;margin:0 auto;padding:12px;gap:10px;}
+#lp{width:230px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px;}
+.pt{color:var(--gold);font-size:.78em;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;}
+.sr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:.88em;}
+.sl{color:var(--muted);}.sv{color:var(--text);font-weight:bold;}
+.bw{background:#111;border-radius:3px;height:8px;margin-bottom:8px;overflow:hidden;}
+.bf{height:100%;border-radius:3px;transition:width .3s;}
+.bhp{background:linear-gradient(90deg,#922b21,var(--red));}
+.bes{background:linear-gradient(90deg,#1a5276,var(--blue));}
+.brg{background:linear-gradient(90deg,#935116,var(--rage));}
+.pm{background:#111;border:1px solid var(--border);border-radius:4px;padding:8px;margin-bottom:6px;font-size:.82em;}
+.pmn{color:var(--gold);margin-bottom:3px;font-weight:bold;}.pmd{color:var(--muted);font-size:.78em;}
+.is{background:#111;border:1px solid var(--border);border-radius:4px;padding:6px 8px;margin-bottom:4px;font-size:.82em;display:flex;justify-content:space-between;}
+.ic{color:var(--gold);font-size:.75em;}
+#cp{flex:1;display:flex;flex-direction:column;gap:10px;}
+#fi{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:16px;font-size:.85em;}
+.fb{background:var(--gold);color:#000;font-weight:bold;padding:3px 10px;border-radius:12px;font-size:.9em;white-space:nowrap;}
+.pbw{flex:1;background:#111;border-radius:3px;height:8px;overflow:hidden;}
+.pbf{height:100%;background:linear-gradient(90deg,#1d8348,var(--green));border-radius:3px;transition:width .4s;}
+.pbt{color:var(--muted);font-size:.8em;white-space:nowrap;}
+#sb{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 20px 16px;flex:1;min-height:320px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:center;position:relative;overflow:visible;}
+.ma{font-size:.72em;color:var(--red);line-height:1.3;margin-bottom:12px;font-family:monospace;white-space:pre;text-shadow:0 0 8px rgba(192,57,43,.6);}
+.mn{color:var(--red);font-size:1.3em;font-weight:bold;margin-bottom:4px;}
+.mg{color:var(--muted);font-size:.78em;margin-bottom:12px;}
+.mhb{width:60%;margin:0 auto 16px;}.mhl{font-size:.78em;color:var(--muted);margin-bottom:4px;}
+.st{font-size:.95em;line-height:1.7;color:var(--text);max-width:520px;margin:0 auto 16px;}
+.hl{color:var(--gold);font-weight:bold;}.dm{color:var(--red);font-weight:bold;}.hm{color:var(--green);font-weight:bold;}
+#ab{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:4px 0 10px;width:100%;flex-shrink:0;background:var(--panel);}
+.btn{padding:10px 18px;border:none;border-radius:5px;cursor:pointer;font-size:.9em;font-family:inherit;font-weight:bold;transition:all .15s;letter-spacing:.5px;}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.15);}
+.btn:active{transform:translateY(0);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none;}
+.ba{background:var(--red);color:#fff;}.bsk{background:var(--purple);color:#fff;}
+.bi{background:#2c3e50;color:var(--text);border:1px solid var(--border);}
+.bf2{background:#1c1c1c;color:var(--muted);border:1px solid var(--border);}
+.bp{background:var(--gold);color:#000;}.bs{background:#2c3e50;color:var(--text);border:1px solid var(--border);}
+#skm,#itm{display:none;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:8px;padding:8px;background:#111;border:1px solid var(--border);border-radius:6px;;width:100%;box-sizing:border-box;flex-shrink:0;}
+.bso{background:#2d1b4e;color:#c39bd3;border:1px solid #8e44ad;padding:7px 14px;border-radius:4px;cursor:pointer;font-size:.83em;font-family:inherit;transition:all .15s;line-height:1.4;}
+.bso:hover{background:var(--purple);color:#fff;}.bso:disabled{opacity:.4;cursor:not-allowed;}
+.sc2{font-size:.72em;color:var(--muted);display:block;}
+#sc3{max-height:calc(100vh - 280px);overflow-y:auto;width:100%;}
+.rd{position:absolute;top:12px;right:16px;font-size:.78em;color:var(--rage);font-weight:bold;}
+#rp{width:220px;flex-shrink:0;display:flex;flex-direction:column;}
+#lb{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px;flex:1;overflow-y:auto;font-size:.78em;line-height:1.6;max-height:calc(100vh - 80px);}
+.le{margin-bottom:4px;color:#e8e8e8;}.ld{border-top:1px solid #333;margin:3px 0;text-align:center;color:#444;font-size:.75em;letter-spacing:2px;padding:2px 0;}
+.lt{color:#475569;font-size:.74em;text-align:center;letter-spacing:.08em;border-top:1px solid #1e293b;border-bottom:1px solid #1e293b;padding:1px 0;margin:2px 0;}.ltag{color:#c9a84c;font-weight:bold;}.lr{color:#f87171;}.lo{color:#fb923c;}.lc{color:#2dd4bf;}.lsk{color:#38bdf8;}.lpd{color:#c084fc;}
+.ei{font-size:3.5em;margin-bottom:10px;}.et{color:var(--gold);font-size:1.2em;font-weight:bold;margin-bottom:10px;}
+.bl2{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;min-height:4.8em;align-items:flex-start;padding:4px 0;}
+.bb{background:#4a235a;border:1px solid var(--purple);color:#c39bd3;padding:1px 6px;border-radius:10px;font-size:.7em;}
+.db{background:#1a2340;border:1px solid #5d6d7e;color:#85929e;padding:1px 6px;border-radius:10px;font-size:.7em;}
+#is2{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;text-align:center;padding:20px;}
+#is2 h1{color:var(--gold);font-size:2em;margin-bottom:8px;text-shadow:0 0 20px rgba(201,168,76,.8);}
+.qt{color:var(--text);font-style:italic;border-left:3px solid var(--gold);padding-left:16px;margin-bottom:30px;text-align:left;max-width:460px;line-height:1.8;font-size:.95em;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;text-align:center;padding:20px;}
+.ov.act{display:flex;}
+#go h2{color:var(--red);font-size:2.2em;margin-bottom:12px;}
+#cl h2{color:var(--gold);font-size:2.2em;margin-bottom:12px;text-shadow:0 0 20px rgba(201,168,76,.8);}
+.ov p{color:var(--text);max-width:480px;line-height:1.7;margin-bottom:24px;}
+.ecard{background:#111;border:2px solid var(--border);border-radius:6px;padding:8px 6px;flex:1;min-width:90px;max-width:160px;text-align:center;transition:border-color .2s;cursor:pointer;}
+.ecard:hover{border-color:#555;}
+.ecard-a{border-color:var(--gold)!important;box-shadow:0 0 8px rgba(201,168,76,.3);}
+.ecard-d{opacity:.35;cursor:default!important;}
+.ecards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+@media(max-width:900px){#gc{flex-direction:column;}#lp,#rp{width:100%;}#lb{max-height:200px;}}
+</style>
+</head>
+<body>
+<div id="is2">
+  <img src="https://swebtoon-phinf.pstatic.net/20251014_120/1760376803548mndgb_JPEG/EpisodeList_Mobile.jpg?type=crop540_540"
+    style="height:260px;border-radius:12px;margin-bottom:16px;box-shadow:0 0 30px rgba(201,168,76,.5);object-fit:cover"
+    onerror="this.style.display='none'" alt="게임 속 바바리안으로 살아남기">
+  <h1>⚔️ 게임 속 바바리안으로 살아남기</h1>
+  <div style="color:var(--muted);font-size:.88em;margin-bottom:24px;">Surviving the Game as a Barbarian · Dungeon &amp; Stone</div>
+  <div class="qt">"2D 버전으로도 못 깼는데, 이걸 현실에서 깨라고?<br>어쩌면 평생 여기서 살아야 할지도 모르겠다.<br>뭐, 그조차도 쉽지는 않겠지만."</div>
+  <p style="color:var(--muted);max-width:420px;line-height:1.7;margin-bottom:24px;font-size:.88em;">인디 게임 <strong style="color:var(--gold)">던전 앤 스톤</strong>의 바바리안 <strong style="color:var(--gold)">비요른 얀델</strong>로 빙의되어<br>1층부터 8층까지 미궁을 탐험하고 살아남으십시오.</p>
+  <button class="btn bp" id="btn-newgame" onclick="newGame()" style="font-size:1.1em;padding:12px 32px;">탐험 시작 ▶</button>
+  <div id="sv-wrap" style="display:none;margin-top:12px;text-align:center">
+    <button class="btn bs" onclick="loadSave()" style="font-size:.95em;padding:9px 24px;">🔄 이어하기</button>
+    <div id="sv-info" style="color:#7f7f7f;font-size:.76em;margin-top:5px;line-height:1.5"></div>
+  </div>
+</div>
+<div id="go" class="ov"><h2>💀 전멸</h2><p id="dm2">미궁의 어둠 속에서 비요른 얀델은 쓰러졌다.</p><button class="btn bp" onclick="restartGame()">다시 시작</button></div>
+<div id="cl" class="ov">
+  <h2>🏆 미궁 정복</h2>
+  <p>비요른 얀델은 5층 미궁의 최심부에서 서리군주 이글라시르를 쓰러뜨렸다.<br>바바리안의 포효가 미궁 전체를 울렸다. <strong style="color:var(--gold)">살아남았다.</strong></p>
+  <div id="cs" style="color:var(--gold);margin-bottom:20px;font-size:.9em;line-height:2;"></div>
+  <button class="btn bp" onclick="restartGame()">처음부터 다시</button>
+</div>
+<header><h1>⚔️ 게임 속 바바리안으로 살아남기</h1><div class="sub">던전 앤 스톤 · 비요른 얀델의 미궁 탐험기</div></header>
+<div id="gc">
+  <div id="lp">
+    <div class="panel">
+      <div class="pt">⚔️ 비요른 얀델</div>
+      <div class="sr"><span class="sl">종족</span><span class="sv" style="color:var(--rage)">바바리안</span></div>
+      <div style="margin-bottom:4px;font-size:.78em;color:var(--muted);">체력 (HP)</div>
+      <div class="bw"><div class="bf bhp" id="hpb" style="width:100%"></div></div>
+      <div class="sr" style="margin-top:-4px;margin-bottom:8px;"><span class="sv" style="color:var(--red)" id="hpv">200</span><span class="sl" id="mhv">/ 200</span></div>
+      <div style="margin-bottom:4px;font-size:.78em;color:var(--muted);">분노 게이지 (Rage)</div>
+      <div class="bw"><div class="bf brg" id="rgb" style="width:0%"></div></div>
+      <div class="sr" style="margin-top:-4px;margin-bottom:10px;"><span class="sv" style="color:var(--rage)" id="rgv">0</span><span class="sl">/ 100</span></div>
+      <div class="sr"><span class="sl">힘 (STR)</span><span class="sv" id="stv">35</span></div>
+      <div class="sr"><span class="sl">방어력 (DEF)</span><span class="sv" id="dfv">20</span></div>
+      <div class="sr"><span class="sl">마법방어 (MDEF)</span><span class="sv" id="mdfv" style="color:#a78bfa">5</span></div>
+      <div class="sr"><span class="sl">보유 마석</span><span class="sv" style="color:var(--blue)" id="tev">0</span></div>
+      <div class="sr"><span class="sl">처치 수</span><span class="sv" id="kcv">0</span></div>
+      <div class="sr"><span class="sl">레벨</span><span class="sv" style="color:var(--gold)" id="lvv">Lv.1</span></div>
+      <div class="sr" style="font-size:.78em"><span class="sl" id="nxtlv" style="color:var(--muted)">다음 레벨: 5킬</span></div>
+      <div id="bfd" class="bl2"></div>
+    </div>
+    <div class="panel"><div class="pt">👥 파티</div><div id="pl"><div style="color:var(--muted);font-size:.82em;">아직 동료가 없다.</div></div></div>
+    <div class="panel"><div class="pt">🎒 인벤토리</div><div id="il"><div style="color:var(--muted);font-size:.82em;">비어있음</div></div></div>
+    <div class="panel"><div class="pt">🔧 장착 장비</div><div id="eql"></div></div>
+    <div class="panel"><div class="pt">✨ 장착 정수 <span id="runeslotv" style="color:var(--muted);font-size:.8em">(1/1)</span></div><div id="runelist" style="font-size:.78em;color:var(--muted)">정수 없음</div></div>
+  </div>
+  <div id="cp">
+    <div id="fi"><span class="fb" id="flb">1층</span><div class="pbw"><div class="pbf" id="prf" style="width:0%"></div></div><span class="pbt" id="prt">0 / 6</span></div>
+    <div id="sb"><div class="rd" id="rdi"></div><div id="sc3"></div>
+    <div id="skm"></div><div id="itm"></div><div id="ab"></div></div>
+  </div>
+  <div id="rp">
+    <div class="pt" style="padding:12px 12px 6px;color:var(--gold);font-size:.78em;letter-spacing:1px;">📜 전투 로그</div>
+    <div id="lb"></div>
+  </div>
+</div>
+<script>
+const MN={
+  1:[
+    {name:'노움',grade:1,emoji:'🪨',maxHp:90,hp:90,str:12,def:3,essence:8,art:'  ≋≋≋≋≋  \n ╔═════╗ \n ║◉   ◉║ \n ║▒▒▒▒▒║ \n  ╚═══╝  '},
+    {name:'고블린',grade:1,emoji:'🧌',maxHp:110,hp:110,str:15,def:4,essence:10,art:' ∧___∧   \n(>◉ ◉<) \n/║ ≋≋≋ ║\ \n ║_____║  \n  ╚═══╝  '},
+    {name:'구울',grade:1,emoji:'🧟',maxHp:85,hp:85,str:13,def:2,essence:8,art:'  ░(☠  ☠)░ \n ░║      ║░\n ╔╚══════╝╗\n ║░░░░░░░║ \n  ╚══════╝ '},
+  ],
+  '2_goblin':[
+    {name:'고블린 검사',grade:2,emoji:'🧌',maxHp:400,hp:400,str:66,def:20,essence:26,art:'  ∧___∧  \n (◉⚔ ◉) \n╔═══════╗\n║🗡█████║\n║███████║\n╚═══════╝'},
+    {name:'고블린 궁수',grade:2,emoji:'🧌',maxHp:360,hp:360,str:60,def:10,essence:24,magic:true,art:'  ∧___∧  \n (◎   ◎) \n ╔═════╗ \n ║🏹▒▒▒║ \n ╚══╤══╝ \n    │    '},
+    {name:'고블린 마법사',grade:2,emoji:'🔮',maxHp:350,hp:350,str:68,def:6,essence:26,magic:true,art:'  ∧  ∧  \n (◎  ◎) \n ╔════╗ \n ║🔮▒▒║ \n ╚══╤═╝ \n    │   '},
+    {name:'홉 고블린',grade:2,emoji:'🧌',maxHp:420,hp:420,str:62,def:16,essence:27,art:'  🌲  🌲  \n (◉◉  ◉◉) \n ╔══════╗ \n ║██████║ \n ╚══╤═══╝ \n    │    '},
+  ],
+  '2_beast':[
+    {name:'칼날늑대 무리',grade:2,emoji:'🐺',maxHp:410,hp:410,str:65,def:14,essence:28,art:' ◣◤◣◤◣  \n(◈    ◈) \n ╔══╦══╗ \n ║▓▓║▓▓║ \n  \/   \/  \n  ─────  '},
+    {name:'씨웜',grade:2,emoji:'🐛',maxHp:480,hp:480,str:70,def:18,essence:30,art:'  ~~~~~  \n ╔═════╗ \n ║🐛▒▒▒║ \n ╚═════╝ '},
+    {name:'데스핀드',grade:2,emoji:'🦇',maxHp:540,hp:540,str:63,def:17,essence:27,art:'🦇      🦇\n (◉    ◉) \n ╔══════╗ \n ║▓▓▓▓▓▓║ \n  ╚════╝  ',spc:{type:'regen',every:2,val:55}},
+    {name:'야수 멧돼지',grade:2,emoji:'🐗',maxHp:390,hp:390,str:60,def:20,essence:25,art:'  🐗     \n (◉  ◉)  \n ╔══════╗ \n ║██████║ \n ╚══════╝ '},
+  ],
+  '2_desert':[
+    {name:'오크',grade:2,emoji:'👹',maxHp:430,hp:430,str:65,def:17,essence:28,art:'  ◣◤◣◤  \n (◉  ◉) \n ╔╤══╤╗ \n ║║WW║║ \n  ╚══╝  \n  /  \\  '},
+    {name:'오크 주술사',grade:2,emoji:'🧙',maxHp:360,hp:360,str:72,def:8,essence:26,magic:true,art:'  ∧  ∧  \n (◉  ◉) \n╔╔════╗╗\n║║▒▒▒▒║║\n╚╚════╝╝'},
+    {name:'사막 전갈',grade:2,emoji:'🦂',maxHp:400,hp:400,str:58,def:22,essence:25,art:'  🏜️    \n ╔════╗ \n ║🦂▓▓║ \n ╚════╝ ',spc:{type:'status',every:3,status:'poison'}},
+    {name:'스톤 고블린',grade:2,emoji:'🪨',maxHp:460,hp:460,str:60,def:25,essence:27,art:'  ∧  ∧  \n (◉  ◉) \n ╔════╗ \n ║▓▓▓▓║ \n ╚════╝ '},
+  ],
+  '2_undead':[
+    {name:'레이스',grade:2,emoji:'👻',maxHp:320,hp:320,str:75,def:5,essence:26,magic:true,art:' 👻    👻 \n  (◉  ◉)  \n   ╔══╗   \n  ░║▒▒║░  \n   ╚══╝   '},
+    {name:'스켈레톤',grade:2,emoji:'💀',maxHp:430,hp:430,str:62,def:18,essence:27,art:'   ☠    \n  ╔════╗  \n (☠    ☠) \n ╔╚════╝╗ \n  ╚════╝  '},
+    {name:'뼈 갑사',grade:2,emoji:'⚔️',maxHp:480,hp:480,str:72,def:20,essence:30,art:'  ╔════╗  \n (☠    ☠) \n ╔╚════╝╗ \n ║░░░░░░║ \n  ╚════╝  '},
+    {name:'구울 무리',grade:2,emoji:'🧟',maxHp:380,hp:380,str:58,def:12,essence:24,art:'🧟╔════╗🧟\n ║▒▒▒▒║  \n  ╚════╝  '},
+  ],
+  3:[
+    {name:'리자드맨',grade:3,emoji:'🦎',maxHp:2268,hp:2268,str:170,def:53,essence:62,art:' 🦎     🦎 \n  (◈◈◈)  \n ╔══════╗ \n ║██████║ \n ╚══════╝ \n   ╚╩╝   '},
+    {name:'프로그맨',grade:3,emoji:'🐸',maxHp:2100,hp:2100,str:162,def:48,essence:60,art:'  🐸   🐸  \n  (◉  ◉)  \n ╔══════╗ \n ║▒▒▒▒▒▒║ \n ╚══════╝ ',spc:{type:'status',every:3,status:'poison'}},
+    {name:'무명 조각상',grade:3,emoji:'🗿',maxHp:2430,hp:2430,str:165,def:65,essence:64,art:' ╔══════╗ \n ║X    X║ \n╔╚══════╝╗\n║████████║\n╚════════╝'},
+    {name:'카니바로',grade:3,emoji:'😤',maxHp:2200,hp:2200,str:195,def:42,essence:62,art:'◣◤◣◤◣◤\n(◉◉  ◉◉)\n╔════════╗\n║▓▓▓▓▓▓▓▓║\n╚════════╝'},
+    {name:'오크 대주술사',grade:3,emoji:'🧙',maxHp:2333,hp:2333,str:184,def:35,essence:70,magic:true,art:'  ∧  ∧   \n (◉  ◉)  \n╔╔════╗╗ \n║║▒▒▒▒║║ \n╚╚════╝╝ \n  ╚══╝   '},
+  ],
+  4:[
+    {name:'가고일',grade:4,emoji:'🗿',maxHp:6600,hp:6600,str:295,def:88,essence:98,art:'🌑◣◤◣🌑\n(◈    ◈)\n╔══════╗\n║██████║\n╚══════╝\n /    \\ '},
+    {name:'리빙아머',grade:4,emoji:'🛡️',maxHp:7200,hp:7200,str:305,def:105,essence:100,art:'⚔╔════╗⚔\n║◈    ◈║\n╔║████║╗\n║╚════╝║\n╚══════╝'},
+    {name:'임프',grade:4,emoji:'😈',maxHp:5800,hp:5800,str:322,def:60,essence:95,magic:true,art:' 😈  😈  \n(◉◉  ◉◉)\n ╔═════╗ \n ║▒▒▒▒▒║ \n  ╚═══╝  '},
+    {name:'나이트플라',grade:4,emoji:'🦅',maxHp:6800,hp:6800,str:288,def:92,essence:96,art:'🌑  ╔══╗  🌑\n   ║▓▓║   \n 🦅╚══╝🦅 '},
+    {name:'하프 트롤',grade:4,emoji:'🏔️',maxHp:6885,hp:6885,str:308,def:91,essence:98,art:'◣◤◣◤◣◤\n(◉◉  ◉◉)\n╔══════╗\n║██████║\n║██████║\n╚══════╝'},
+    {name:'아이언팔콘',grade:4,emoji:'🦅',maxHp:7128,hp:7128,str:324,def:87,essence:95,art:'  🦅     🦅  \n  (◈    ◈)  \n ╔════════╗ \n ║████████║ \n  ╚══════╝  '},
+  ],
+  5:[
+    {name:'서리군주의 선봉대',grade:5,emoji:'❄️',maxHp:16200,hp:16200,str:486,def:148,essence:148,art:'❄❄❄❄❄❄❄❄\n╔════════╗\n║◈      ◈║\n║████████║\n╚════════╝\n ════════ '},
+    {name:'트롤',grade:4,emoji:'🟤',maxHp:14175,hp:14175,str:454,def:136,essence:120,art:'◣◤◣◤◣◤◣\n(◉◉  ◉◉)\n╔════════╗\n║████████║\n║████████║\n╚════════╝',spc:{type:'regen',every:3,val:300}},
+    {name:'오우거',grade:4,emoji:'👾',maxHp:7695,hp:7695,str:502,def:144,essence:132,art:'◣◣◣◣◣◣◣◣\n(◉◉    ◉◉)\n╔════════╗\n║████████║\n╚════════╝\n ║    ║  ',spc:{type:'enrage',at50:true,bonus:150}},
+    {name:'만티코어',grade:4,emoji:'🦁',maxHp:17010,hp:17010,str:518,def:134,essence:138,art:' ╔══╦══╗ \n(◈      ◈)\n ╔══════╗ \n ║██████║ \n ╚══════╝ \n  /    \\  '},
+    {name:'빙하 늑대',grade:4,emoji:'🐺',maxHp:14985,hp:14985,str:466,def:142,essence:122,art:'❄◣◤◣❄\n(◈    ◈)\n❄╔══╗❄\n ║██║ \n ╚══╝ '},
+    {name:'서리 마법사',grade:5,emoji:'🧊',maxHp:11664,hp:11664,str:567,def:0,essence:140,magic:true,art:'🧊  🔮  🧊\n ╔═════╗ \n ║◈   ◈║ \n ║  ❄  ║ \n  ╚═══╝  \n  /   \\  ',spc:{type:'status',every:2,status:'freeze'}},
+  ],
+  6:[
+    {name:'뱀파이어 로드',grade:4,emoji:'🦇',maxHp:38880,hp:38880,str:648,def:199,essence:198,art:'🦇       🦇\n (◉   ◉) \n ╔═════╗ \n ║▓▓▓▓▓║ \n🦇╚═══╝🦇\n  /   \\  ',spc:{type:'drain',pct:0.4}},
+    {name:'석상 골렘',grade:4,emoji:'🗿',maxHp:45360,hp:45360,str:616,def:257,essence:210,art:' ╔═════╗ \n ║█ × █║ \n╔║█████║╗\n║╚═════╝║\n╚███████╝\n  ╚═══╝  '},
+    {name:'심해 거인',grade:3,emoji:'🌊',maxHp:41310,hp:41310,str:664,def:217,essence:218,art:'🌊🌊🌊🌊🌊🌊\n╔══════════╗\n║◈        ◈║\n║██████████║\n╚══════════╝\n🌊        🌊'},
+    {name:'어둠 파수꾼',grade:4,emoji:'🛡️',maxHp:23490,hp:23490,str:705,def:229,essence:225,art:'⚔⚔  [🛡]  ⚔⚔\n╔══════════╗\n║◈◈      ◈◈║\n║██████████║\n╚══════════╝'},
+    {name:'벨라리오스',grade:3,emoji:'🌿',maxHp:32076,hp:32076,str:608,def:160,essence:212,magic:true,art:' 🌿  🌿  \n(◈      ◈)\n 🌿🌿🌿🌿 \n╔════════╗\n╚════════╝\n  /    \\  '},
+    {name:'죽음의 기사',grade:5,emoji:'💀',maxHp:53460,hp:53460,str:770,def:239,essence:242,art:'  ☠☠☠  \n ╔═╪═╗ \n(☠   ☠) \n╔║═════║╗\n║╚═════╝║\n ╚╝   ╚╝ '},
+  ],
+  7:[
+    {name:'고대 드래곤 새끼',grade:5,emoji:'🔥',maxHp:95580,hp:95580,str:770,def:267,essence:298,art:'🔥 ╔══╦══╗ 🔥\n(◈◈      ◈◈)\n╔══════════╗\n║██████████║\n╚══════════╝\n🔥        🔥'},
+    {name:'어비살 콜로서스',grade:5,emoji:'🌑',maxHp:103680,hp:103680,str:794,def:292,essence:312,art:'🌑🌑🌑🌑🌑🌑\n╔══════════╗\n║◈◈      ◈◈║\n║██████████║\n║██████████║\n╚══════════╝',spc:{type:'enrage',at50:true,bonus:250}},
+    {name:'환영 기사',grade:5,emoji:'👻',maxHp:98820,hp:98820,str:810,def:280,essence:305,art:'👻  ◣◤  👻\n (◉   ◉) \n ╔═════╗ \n ║▓▓▓▓▓║ \n👻╚═══╝👻\n  /   \\  '},
+    {name:'바이욘',grade:3,emoji:'✨',maxHp:81648,hp:81648,str:745,def:256,essence:286,magic:true,art:'✨  ◆  ✨\n◆ ✨✨ ◆ \n✨(◈◈)✨\n◆ ✨✨ ◆ \n✨  ◆  ✨',spc:{type:'status',every:4,status:'poison'}},
+    {name:'심연의 눈',grade:5,emoji:'🌀',maxHp:78732,hp:78732,str:850,def:0,essence:290,magic:true,art:'🌀◆◆◆◆◆🌀\n◆(👁   👁)◆\n◆   🌀   ◆\n◆(👁   👁)◆\n🌀◆◆◆◆◆🌀'},
+    {name:'심층 마물',grade:5,emoji:'🔮',maxHp:101250,hp:101250,str:784,def:277,essence:300,art:'🔮◣◤◣🔮\n(◈◈  ◈◈)\n🔮╔══╗🔮\n  ║██║  \n  ╚══╝  \n  /  \\  '},
+  ],
+  8:[
+    {name:'불사 기사',grade:5,emoji:'⚰️',maxHp:226800,hp:226800,str:850,def:337,essence:420,art:'  ☠☠☠  \n ╔═╪═╗ \n(☠   ☠) \n╔║═════║╗\n║╚═════╝║\n ╚╝   ╚╝ '},
+    {name:'혼돈의 마물',grade:5,emoji:'🌀',maxHp:243000,hp:243000,str:891,def:312,essence:445,art:'🌀🌀🌀🌀🌀\n╔═════════╗\n║◈       ◈║\n║▓▓▓▓▓▓▓▓▓║\n╚═════════╝\n🌀  🌀  🌀'},
+    {name:'카오스 마법사',grade:5,emoji:'🔮',maxHp:185895,hp:185895,str:972,def:0,essence:435,magic:true,art:'🔮  🔮  🔮\n ╔═════╗ \n ║◈   ◈║ \n ║  ✦  ║ \n  ╚═══╝  \n  /   \\  ',spc:{type:'status',every:2,status:'burn'}},
+    {name:'절망의 골렘',grade:5,emoji:'⛏️',maxHp:252720,hp:252720,str:875,def:374,essence:458,art:' ╔═════╗ \n ║X   X║ \n╔╚═════╝╗\n║███████║\n║███████║\n╚═══════╝'},
+    {name:'심층 뱀파이어',grade:5,emoji:'🩸',maxHp:233280,hp:233280,str:932,def:326,essence:462,art:'🦇 ╔═══╗ 🦇\n (◉   ◉) \n ╔═════╗ \n ║▓▓▓▓▓║ \n🦇╚═══╝🦇\n  /   \\  ',spc:{type:'drain',pct:0.5}},
+    {name:'원시의 드래곤',grade:5,emoji:'🐲',maxHp:268920,hp:268920,str:956,def:358,essence:482,art:'🔥 🐲🐲🐲 🔥\n╔══════════╗\n║◈◈      ◈◈║\n║██████████║\n╚══════════╝\n🔥        🔥',spc:{type:'doublehit',every:4}},
+  ],
+};
+
+const BS={
+  1:{name:'고블린 광전사',grade:2,emoji:'👺',maxHp:250,hp:250,str:26,def:10,essence:60,
+    art:'  👑👺👑  \n  (◉◉  ◉◉)  \n ╔══════════╗ \n ║██████████║ \n ╚════╤═════╝ \n      │      ',
+    spc:{type:'enrage',at50:true,bonus:30}},
+  '2_goblin':{name:'고블린 제왕',grade:3,emoji:'🧌',maxHp:1200,hp:1200,str:102,def:38,essence:200,
+    art:'🌲  👑  🌲\n(◉◉    ◉◉)\n╔══════════╗\n║██████████║\n╚══════════╝',
+    spc:{type:'enrage',at50:true,bonus:50}},
+  '2_beast':{name:'야수 군주',grade:3,emoji:'🐗',maxHp:1150,hp:1150,str:110,def:42,essence:200,
+    art:'◣◤◣◤◣◤\n(◈◈    ◈◈)\n╔══════════╗\n║████████████║\n╚══════════╝',
+    spc:{type:'doublehit',every:3}},
+  '2_desert':{name:'오크 히어로',grade:3,emoji:'🏆',maxHp:1300,hp:1300,str:108,def:45,essence:200,
+    art:'🏜️[⚔]🏜️\n(◉◉  ◉◉)\n╔════════╗\n║██████████║\n╚════════╝',
+    spc:{type:'enrage',at50:true,bonus:60}},
+  '2_undead':{name:'데스나이트',grade:3,emoji:'💀',maxHp:1100,hp:1100,str:115,def:35,essence:200,
+    art:'  ☠☠☠  \n ╔═╪═╗ \n(☠   ☠) \n║🗡█████║\n ╚═════╝ \n  ╚═╝   ',
+    spc:{type:'doublehit',every:3}},
+  3:{name:'오크 대전사',grade:4,emoji:'⚔️',maxHp:16500,hp:16500,str:260,def:90,essence:380,
+    art:'[⚔]  👑  [⚔]\n(◉◉      ◉◉)\n╔══════════╗\n║████████████║\n║████████████║\n╚══════════╝',
+    spc:{type:'enrage',at50:true,bonus:100}},
+  4:{name:'트롤',grade:5,emoji:'🟤',maxHp:58000,hp:58000,str:510,def:165,essence:650,
+    art:'◣◤◣◤◣◤◣\n(◉◉  ◉◉)\n╔════════╗\n║████████║\n║████████║\n╚════════╝',
+    spc:{type:'regen',every:3,val:2000}},
+  5:{name:'서리군주 이글라시르',grade:5,emoji:'☃',maxHp:66825,hp:66825,str:664,def:253,essence:1200,art:'❄❄❄  👑  ❄❄❄\n╔════════════╗\n║◈          ◈║\n║████████████║\n╚════════════╝\n❄  ═══════  ❄',spc:{type:'status',every:4,status:'freeze'}},
+  6:{name:'심층 파수꾼',grade:5,emoji:'⚔',maxHp:162000,hp:162000,str:859,def:346,essence:2000,art:'⚔⚔  [⚔]  ⚔⚔\n╔══════════╗\n║◈◈      ◈◈║\n║██████████║\n╚══════════╝\n══ ╔═════╗ ══',spc:{type:'doublehit',every:2}},
+  7:{name:'어둠의 지배자',grade:5,emoji:'🌑',maxHp:364500,hp:364500,str:1037,def:428,essence:3500,art:'🌑🌑  👑  🌑🌑\n╔══════════╗\n║◈◈      ◈◈║\n║▓▓▓▓▓▓▓▓▓▓║\n║▓▓▓▓▓▓▓▓▓▓║\n╚══════════╝',spc:[{type:'status',every:3,status:'bleed'},{type:'enrage',at50:true,bonus:350}]},
+  8:{name:'미궁의 주인 — 심층왕',grade:5,emoji:'💀',maxHp:891000,hp:891000,str:1256,def:508,essence:8000,art:'💀💀  👑  💀💀\n╔════════════╗\n║◈◈        ◈◈║\n║████████████║\n║████████████║\n╚════════════╝',spc:[{type:'devour',every:4},{type:'enrage',at50:true,bonus:500}]},
+};
+
+const BOSS_DROPS={
+  1:{ess:[{id:'spider_boss_e',   chance:20}], item:{id:'boss_1_axe',    chance:20}},
+  '2_goblin':{ess:[{id:'goblin_king_e',chance:20}], item:{id:'boss_2g_crown', chance:20}},
+  '2_beast': {ess:[{id:'beast_lord_e', chance:20}], item:{id:'boss_2b_claw',  chance:20}},
+  '2_desert':{ess:[{id:'orc_hero_e',  chance:20}], item:{id:'boss_2d_shield', chance:20}},
+  '2_undead':{ess:[{id:'dknight_e',   chance:20}], item:{id:'boss_2u_armor',  chance:20}},
+  3:{ess:[{id:'gush_boss_e',    chance:20}], item:{id:'boss_3_ring',   chance:20}},
+  4:{ess:[{id:'dragon_boss_e',  chance:20}], item:{id:'boss_4_arm',    chance:20}},
+  5:{ess:[{id:'frost_boss_e',   chance:20}], item:{id:'boss_5_helm',   chance:20}},
+  6:{ess:[{id:'sentinel_boss_e',chance:20}], item:{id:'boss_6_wpn',    chance:20}},
+  7:{ess:[{id:'dark_boss_e',    chance:20}], item:{id:'boss_7_ring',   chance:20}},
+  8:{ess:[{id:'king_boss_e',    chance:20}], item:{id:'boss_8_arm',    chance:20}},
+};
+
+// ── 균열(Crack) 스테이지 데이터 ──
+// 난이도: 현재 층+1.5 (1층 균열=2.5층 기준, 2~3층 사이)
+const CRACK_DATA={
+  frost:{
+    name:'빙하굴',emoji:'🧊',crackTotal:7,
+    intro:'거대한 빙하가 녹아내리는 동굴. 얼어붙은 괴물들이 살아 움직이고 있다. 깊이 들어갈수록 저체온증이 몸을 파고든다.',
+    monsters:[
+      {name:'서리 늑대',        grade:3,emoji:'🐺',maxHp:850, hp:850, str:100,def:22,essence:40,art:'   🐺   \n  /|\\  '},
+      {name:'아이스 골렘',      grade:3,emoji:'🧊',maxHp:1200,hp:1200,str:108,def:40,essence:52,art:'╔════╗ \n║❄  ❄║ \n║████║ \n╚════╝ '},
+      {name:'아이스 오크 주술사',grade:4,emoji:'🔵',maxHp:950, hp:950, str:120,def:18,essence:44,magic:true,art:'🔵❄❄❄🔵\n(◉   ◉)\n╔═════╗ '},
+    ],
+    midBoss:{name:'예티',grade:3,emoji:'🐾',
+      maxHp:1800,hp:1800,str:145,def:38,essence:90,
+      art:' ⬛⬛⬛ \n(❄◉ ◉❄)\n╔══════╗\n║██████║\n╚══════╝',
+      spc:{type:'enrage',at50:true,bonus:50}},
+    boss:{name:'폭군 타룬바스',grade:4,emoji:'🐺',
+      maxHp:4000,hp:4000,str:152,def:55,essence:150,
+      art:'🐺❄❄❄🐺\n╔═════════╗\n║◉       ◉║\n║█████████║\n╚═════════╝\n  ❄   ❄   ',
+      spc:{type:'status',every:3,status:'freeze'}},
+    essDrops:[{id:'crack_frost_e',chance:40}],
+    itemDrop:{id:'crack_frost_ring',chance:50},
+  },
+  mine:{
+    name:'녹색 탄광',emoji:'⛏',crackTotal:7,
+    intro:'채굴된 광맥이 뻗어 있는 지하 탄광. 광물을 양분 삼아 사는 괴물들이 서식한다. 레일 위를 굴러다니는 광석 골렘들이 위협적이다.',
+    monsters:[
+      {name:'고블린 광부', grade:3,emoji:'⛏',maxHp:800, hp:800, str:95, def:20,essence:38,art:'  ⛏   \n(◉  ◉)\n╔══╗  '},
+      {name:'광물 슬라임', grade:3,emoji:'💚',maxHp:900, hp:900, str:88, def:36,essence:40,art:'╔══════╗\n║▓▓▓▓▓▓║\n╚══════╝'},
+      {name:'홉고블린 광부',grade:3,emoji:'⚒',maxHp:1050,hp:1050,str:108,def:26,essence:44,art:'  ⚒    \n(👁  👁)\n╔════╗  '},
+      {name:'코퍼 골렘',   grade:4,emoji:'🤖',maxHp:1150,hp:1150,str:100,def:38,essence:48,art:'╔══════╗\n║◎    ◎║\n║██████║\n╚══════╝'},
+    ],
+    boss:{name:'킹 슬라임',grade:4,emoji:'🟢',
+      maxHp:3800,hp:3800,str:140,def:48,essence:130,
+      art:'╔══════════╗\n║💚  💚  💚║\n║██████████║\n║██████████║\n╚══════════╝',
+      spc:{type:'enrage',at50:true,bonus:50}},
+    essDrops:[{id:'crack_mine_e',chance:40}],
+    itemDrop:{id:'crack_mine_helm',chance:40},
+  },
+  castle:{
+    name:'핏빛 성채',emoji:'🏰',crackTotal:10,
+    intro:'흡혈귀와 저주받은 기사들의 요새. 석벽에서 피가 흘러내리고, 공기 자체가 부패한 마력으로 가득하다. 가장 위험한 1층 균열.',
+    monsters:[
+      {name:'저주받은 기사',grade:3,emoji:'🗡️',maxHp:1400,hp:1400,str:125,def:40,essence:52,art:' ╔════╗ \n(☠    ☠)\n║🗡████║\n╚═════╝\n  ╚═╝  '},
+      {name:'피의 마법사', grade:3,emoji:'🔮',maxHp:1100,hp:1100,str:135,def:15,essence:50,magic:true,art:'🩸╔════╗🩸\n ║◉  ◉║ \n ║▒▒▒▒║ \n  ╚══╝  '},
+      {name:'뱀파이어 수하',grade:3,emoji:'🦇',maxHp:1250,hp:1250,str:118,def:38,essence:48,art:'🦇╔════╗🦇\n (◉    ◉)\n ║▓▓▓▓║ \n  ╚══╝  ',spc:{type:'drain',pct:0.20}},
+      {name:'어둠 파수꾼', grade:4,emoji:'🛡️',maxHp:1500,hp:1500,str:130,def:50,essence:55,art:'⚔╔══════╗⚔\n║◈      ◈║\n╔║██████║╗\n║╚══════╝║\n╚════════╝'},
+    ],
+    midBoss:{name:'시체골렘',grade:3,emoji:'🧟',
+      maxHp:3200,hp:3200,str:190,def:52,essence:120,
+      art:'💀 ╔════╗ 💀\n  (☠    ☠) \n╔╚══════╝╗\n║░░░░░░░░║\n╚════════╝\n  ╚════╝  ',
+      spc:{type:'drain',pct:0.15}},
+    boss:{name:'저주받은 기사 블라터',grade:4,emoji:'🩸',
+      maxHp:6000,hp:6000,str:180,def:75,essence:250,
+      art:'🩸☠☠☠🩸\n╔══════════╗\n║◈◈      ◈◈║\n║██████████║\n╚══════════╝\n🩸  ──── 🩸',
+      spc:{type:'doublehit',every:3}},
+    essDrops:[{id:'crack_castle_e',chance:40}],
+    itemDrop:{id:'crack_castle_shield',chance:40},
+  },
+  tomb:{
+    name:'강철의 묘',emoji:'⚙️',crackTotal:7,
+    intro:'고대 제국의 철갑 전사들이 잠든 지하 묘지. 녹슬지 않는 강철 갑옷을 두른 불사 수호자들이 영원히 경비를 선다.',
+    monsters:[
+      {name:'철갑 해골',  grade:3,emoji:'💀',maxHp:900, hp:900, str:105,def:35,essence:40,art:'╔════╗\n║☠  ☠║\n╔╚════╝╗\n║██████║\n╚══════╝'},
+      {name:'강철 수호자',grade:3,emoji:'⚙️',maxHp:1000,hp:1000,str:112,def:42,essence:44,art:'⚙╔════╗⚙\n║◈    ◈║\n╔║████║╗\n╚╚════╝╝'},
+      {name:'무덤 골렘',  grade:3,emoji:'🪨',maxHp:1100,hp:1100,str:100,def:48,essence:46,art:' ╔═════╗ \n ║X   X║ \n╔╚═════╝╗\n║███████║\n╚═══════╝'},
+      {name:'강철 기사',  grade:4,emoji:'⚔️',maxHp:1200,hp:1200,str:120,def:45,essence:50,art:'⚔[████]⚔\n(◉      ◉)\n╔════════╗\n║████████║\n╚════════╝'},
+    ],
+    boss:{name:'철인 일디움',grade:4,emoji:'⚙️',
+      maxHp:4500,hp:4500,str:165,def:80,essence:180,
+      art:'⚙⚙[⚙]⚙⚙\n╔════════╗\n║◈      ◈║\n║████████║\n╚════════╝\n⚙  ════  ⚙',
+      spc:{type:'enrage',at50:true,bonus:70}},
+    essDrops:[{id:'crack_tomb_e',chance:40}],
+    itemDrop:{id:'crack_tomb_armor',chance:40},
+  },
+};
+
+const NPC=[
+  {id:'karin',  name:'사제 카린',             cls:'사제',     emoji:'⚕', desc:'매 턴 3~9% HP 회복 | 15%: 사제의 축복 STR+4·DEF+8 (2턴)'},
+  {id:'raven',  name:'레이븐',                cls:'마법사',   emoji:'🔮',desc:'가끔 마법 공격 (DEF 무시) | 20%: 마법 보호막 MDEF+24 (2턴)'},
+  {id:'bold',   name:'탐험가 볼드',           cls:'탐험가',   emoji:'🗺', desc:'마석 드랍 +20% | 25%: 탐험가의 기운 분노+20'},
+  {id:'erwen',  name:'에르웬',        cls:'정령 궁수',emoji:'🌿',desc:'10%: 정령소환 전체공격 (마법형 ×2.5) | 50%: 조준 ×2 (마법형 ×3) | 40%: 평타 (마법형 ×1.5)'},
+  {id:'amelia', name:'아밀리아 레인웨일즈',   cls:'도플갱어', emoji:'🗡', desc:'암습 + 25% 2연타 | 15%: 그림자 은신 다음 공격 확정 회피'},
+  {id:'ainar',  name:'아이나르 프렌린',        cls:'창 전사',  emoji:'⚔', desc:'창 찌르기 + 3턴마다 분노 충전 | 15%: 전투 고취 STR+8 (2턴)'},
+  {id:'misha',  name:'미샤 카를슈타인',        cls:'서리 쌍검',emoji:'❄', desc:'서리 공격 + 20% 빙결 | 20%: 서리 의지 DEF+10 (2턴)'},
+];
+const NPC_LINES={
+  '사제':     '다치셨군요. 제가 도움이 될 수 있을 것 같습니다.',
+  '마법사':   '분석 완료. 이 조합이 최적입니다. 동행하죠.',
+  '탐험가':   '이 구역은 혼자 돌기엔 위험합니다. 파티를 맺읍시다.',
+  '정령 궁수':'비요른 씨, 제가 곁에 있어야 해요. 반드시.',
+  '도플갱어': '몰래 지켜보는 건 제 특기예요. 뒤는 제가 맡죠.',
+  '창 전사':  '바바리안끼리 함께 가는 거잖아. 당연하지!',
+  '서리 쌍검':'서리로 길을 열어드릴게요. 함께 가죠.',
+};
+const FE={1:9,2:9,3:9,4:9,5:9,6:9,7:9,8:9};
+const ESSENCES={
+  toxic_e:{id:'toxic_e',name:'맹독',emoji:'☠️',
+    desc:'공격 시 30% 중독(매 턴 독 피해) | 스킬: 독 살포 | 고블린',
+    passives:{str:2,def:1},effect:'toxic',val:0.30,skill:'sk_독살포'},
+  dodge_e:{id:'dodge_e',name:'섬광 보법',emoji:'💨',
+    desc:'20% 공격 회피 | 스킬: 섬광 질주 | 칼날늑대',
+    passives:{str:5,def:3},effect:'dodge',val:0.20,skill:'sk_섬광질주'},
+  vampire_e:{id:'vampire_e',name:'생명 흡수',emoji:'🧟',
+    desc:'3턴마다 적 MaxHP 2% 흡혈 | 스킬: 살점폭파 | 시체골렘',
+    passives:{str:8,def:5,hp:20},effect:'vampire',val:0.02,skill:'sk_살점폭파'},
+  storm_e:{id:'storm_e',name:'천둥가시',emoji:'⚡',
+    desc:'공격 시 15% 연속 타격 | 스킬: 전기 폭발 | 플미나스',
+    passives:{str:10,def:4},effect:'chain',val:0.15,skill:'sk_전기폭발'},
+  regen_e:{id:'regen_e',name:'재생각인',emoji:'💚',
+    desc:'매 턴 MaxHP 3% 회복 | 스킬: 생명 폭발 | 오크 대주술사',
+    passives:{str:6,mdef:8},effect:'regen',val:0.03,skill:'sk_생명폭발'},
+  blood_e:{id:'blood_e',name:'어둠의 근원',emoji:'🩸',
+    desc:'처치 시 MaxHP 20% HP 회복 | 스킬: 흡혈송곳 | 뱀파이어 수호자',
+    passives:{str:10,def:6,mdef:8},effect:'lifesteal',val:0.20,skill:'sk_흡혈송곳'},
+  rage_e:{id:'rage_e',name:'투쟁심',emoji:'🔥',
+    desc:'분노 충전 +50% | 스킬: 거대화 | 오크 히어로',
+    passives:{str:15,def:8},effect:'rage_amp',val:0.50,skill:'sk_거대화'},
+  iron_e:{id:'iron_e',name:'무쇠가죽',emoji:'🔴',
+    desc:'DEF+12 치명 1회 버팀 | 스킬: 휘두르기 | 오우거',
+    passives:{str:18,def:12},effect:'sentinel',def:12,skill:'sk_휘두르기'},
+  abyss_e:{id:'abyss_e',name:'순환의 고리',emoji:'🌿',
+    desc:'처치 시 MaxHP 5% 즉시 회복 | 스킬: 야생 폭발 | 벨라리오스',
+    passives:{mdef:15},effect:'abyss',val:0.05,skill:'sk_야생폭발'},
+  guardian_e:{id:'guardian_e',name:'태초의 세포',emoji:'🛡️',
+    desc:'DEF+15 MDEF+12 | 스킬: 철벽 | 심해 거인',
+    passives:{str:12,def:15,mdef:12},effect:'guardian',def:15,mdef:12,skill:'sk_철벽'},
+  void_e:{id:'void_e',name:'진화형 외피',emoji:'🌀',
+    desc:'적 DEF 35% 무시 | 스킬: 회오리베기 | 볼-헤르찬',
+    passives:{def:18},effect:'void',val:0.35,skill:'sk_회오리베기'},
+  berserk_e:{id:'berserk_e',name:'초월',emoji:'✨',
+    desc:'HP<40% 시 STR+50% | 스킬: 야성분출 | 바이욘',
+    passives:{str:20,hp:50},effect:'berserk',val:0.50,skill:'sk_야성분출'},
+  // ── 보스 전용 정수 ──
+  spider_boss_e:{id:'spider_boss_e',name:'광전사의 전쟁 인장',emoji:'👹',
+    desc:'공격 시 25% 분노 폭발(추가 STR+20% 1턴) | STR+5 DEF+3 | ★고블린 광전사 정수★',
+    passives:{str:5,def:3},effect:'spider_boss',val:0.25,skill:'sk_독살포'},
+  chief_boss_e:{id:'chief_boss_e',name:'2층 전사의 증표',emoji:'⚔️',
+    desc:'처치 시 분노 +15 추가 | STR+8 DEF+5 | ★2층 보스 전용★',
+    passives:{str:8,def:5},effect:'chief_boss',val:15,skill:null},
+  goblin_king_e:{id:'goblin_king_e',name:'고블린 제왕의 왕관 파편',emoji:'👑',
+    desc:'공격 시 30% 연쇄 광역 (STR×0.5) | STR+10 DEF+4 | ★고블린 제왕 정수★',
+    passives:{str:10,def:4},effect:'chain',val:0.30,skill:null},
+  beast_lord_e:{id:'beast_lord_e',name:'야수 군주의 어금니',emoji:'🐗',
+    desc:'공격 시 25% 흡혈 (STR×0.4 HP 회복) | STR+12 DEF+3 | ★야수 군주 정수★',
+    passives:{str:12,def:3},effect:'dragon_boss',val:0.25,skill:null},
+  orc_hero_e:{id:'orc_hero_e',name:'오크 영웅의 분노 심장',emoji:'🏆',
+    desc:'공격 시 30% 방어무시 추가타 (STR×0.6) | STR+11 MDEF+5 | ★오크 히어로 정수★',
+    passives:{str:11,mdef:5},effect:'void',val:0.30,skill:null},
+  dknight_e:{id:'dknight_e',name:'데스나이트의 죽음 서약',emoji:'💀',
+    desc:'공격 시 30% 마비 (1턴 행동불가) | STR+9 DEF+6 | ★데스나이트 정수★',
+    passives:{str:9,def:6},effect:'spider_boss',val:0.30,skill:null},
+  gush_boss_e:{id:'gush_boss_e',name:'오크 대전사의 전쟁 함성',emoji:'⚔️',
+    desc:'공격 시 30% 전체 적 연쇄타격 | STR+12 DEF+4 | ★오크 대전사 정수★',
+    passives:{str:12,def:4},effect:'gush_boss',val:0.30,skill:'sk_전기폭발'},
+  dragon_boss_e:{id:'dragon_boss_e',name:'트롤의 재생 심장',emoji:'🟤',
+    desc:'매 전투 후 MaxHP 5% 자연 회복 | DEF+8 MaxHP+80 | ★트롤 정수★',
+    passives:{def:8,hp:80},effect:'dragon_boss',val:0.25,skill:'sk_살점폭파'},
+  frost_boss_e:{id:'frost_boss_e',name:'이글라시르의 서리심',emoji:'❄',
+    desc:'공격 시 20% 빙결 | MDEF+10 STR+4 | ★5층 보스 전용★',
+    passives:{str:4,mdef:10},effect:'frost_boss',val:0.20,skill:null},
+  sentinel_boss_e:{id:'sentinel_boss_e',name:'파수꾼의 각인',emoji:'⚔',
+    desc:'공격 시 25% 방어 완전 무시 | STR+4 DEF+9 | ★6층 보스 전용★',
+    passives:{str:4,def:9},effect:'sentinel_boss',val:0.25,skill:'sk_휘두르기'},
+  dark_boss_e:{id:'dark_boss_e',name:'어둠의 낙인',emoji:'🌑',
+    desc:'처치 시 MaxHP 8% 회복 | STR+11 MDEF+6 | ★7층 보스 전용★',
+    passives:{str:11,mdef:6},effect:'dark_boss',val:0.08,skill:'sk_야성분출'},
+  king_boss_e:{id:'king_boss_e',name:'심층왕의 의지',emoji:'👑',
+    desc:'분노 100 시 공격력 +40% | STR+7 DEF+5 MDEF+5 | ★8층 보스 전용★',
+    passives:{str:7,def:5,mdef:5},effect:'king_boss',val:1.40,skill:'sk_야생폭발'},
+  // ── 균열 보스 정수 ──
+  crack_frost_e:{id:'crack_frost_e',name:'타룬바스의 서리심',emoji:'🧊',
+    desc:'공격 시 15% 빙결 | STR+5 MDEF+7 | ★빙하굴 균열 보스 전용★',
+    passives:{str:5,mdef:7},effect:'frost_boss',val:0.15,skill:null},
+  crack_mine_e:{id:'crack_mine_e',name:'킹슬라임의 젤라틴 핵',emoji:'💚',
+    desc:'매 턴 MaxHP 2% 회복 | DEF+8 MaxHP+65 | ★녹색 탄광 균열 보스 전용★',
+    passives:{def:8,hp:65},effect:'regen',val:0.02,skill:null},
+  crack_castle_e:{id:'crack_castle_e',name:'블라터의 저주 인장',emoji:'🩸',
+    desc:'공격 시 20% 적 방어력 2턴 무력화 | STR+6 DEF+8 MDEF+6 | ★핏빛 성채 균열 보스 전용★',
+    passives:{str:6,def:8,mdef:6},effect:'sentinel_boss',val:0.20,skill:'sk_휘두르기'},
+  crack_tomb_e:{id:'crack_tomb_e',name:'철인 일디움의 강철 의지',emoji:'⚙️',
+    desc:'받는 피해 10% 감소(DEF 추가계산) | STR+5 DEF+14 | ★강철의 묘 균열 보스 전용★',
+    passives:{str:5,def:14},effect:'guardian',def:14,skill:'sk_철벽'},
+};
+const ACTIVE_SKILLS={
+  sk_살점폭파:{name:'살점폭파',desc:'MaxHP 10% 소비 → 적 현재HP 15% 피해',
+    cost:(g)=>g.p.hp<=Math.floor(g.p.mhp*0.11),fn:'skSalPoint'},
+  sk_흡혈송곳:{name:'흡혈송곳',desc:'분노30 → 120% 피해 + 피해량 30% HP 흡수',
+    cost:(g)=>g.p.rage<30,fn:'skBloodSpike'},
+  sk_거대화:{name:'거대화',desc:'분노60 → 2턴 STR×2 / DEF×2',
+    cost:(g)=>g.p.rage<60,fn:'skGiant'},
+  sk_휘두르기:{name:'휘두르기',desc:'분노40 → 220% 피해 | 처치 시 분노 20 환급',
+    cost:(g)=>g.p.rage<40,fn:'skSwing'},
+  sk_야생폭발:{name:'야생 폭발',desc:'분노70 → 2턴 STR×2 + HP 10% 회복',
+    cost:(g)=>g.p.rage<70,fn:'skWildBurst'},
+  sk_철벽:{name:'철벽',desc:'분노35 → 2턴 피해 70% 감소',
+    cost:(g)=>g.p.rage<35,fn:'skIronWall'},
+  sk_회오리베기:{name:'회오리베기',desc:'분노50 → 전체 적 100% 피해',
+    cost:(g)=>g.p.rage<50,fn:'skWhirl'},
+  sk_야성분출:{name:'야성분출',desc:'분노45 → HP 30%↓ 즉사, 아니면 250% 피해',
+    cost:(g)=>g.p.rage<45,fn:'skCombo'},
+  sk_독살포:{name:'독 살포',desc:'분노20 → 전체 적 75% 중독 부여',
+    cost:(g)=>g.p.rage<20,fn:'skToxicCloud'},
+  sk_섬광질주:{name:'섬광 질주',desc:'분노30 → 2연타 각 100% 피해',
+    cost:(g)=>g.p.rage<30,fn:'skFlashStrike'},
+  sk_전기폭발:{name:'전기 폭발',desc:'분노45 → 전체 적 90% 피해 + 1턴 스턴',
+    cost:(g)=>g.p.rage<45,fn:'skThunderBurst'},
+  sk_생명폭발:{name:'생명 폭발',desc:'MaxHP 20% 소비 → 분노+50 (턴 소비 없음)',
+    cost:(g)=>g.p.hp<=Math.floor(g.p.mhp*0.20),fn:'skLifeBurst'},
+  sk_방패밀치기:{name:'방패밀치기',desc:'분노20 → 50% 피해 + 다음 공격력 90% 감소',
+    cost:(g)=>g.p.rage<20,fn:'skShieldBash'},
+};
+const ME={
+  '고블린':        'toxic_e',
+  '칼날늑대':      'dodge_e',
+  '시체골렘':      'vampire_e',
+  '플미나스':      'storm_e',
+  '오크 대주술사': 'regen_e',
+  '뱀파이어 수호자':'blood_e',
+  '오크 히어로':   'rage_e',
+  '오우거':        'iron_e',
+  '벨라리오스':    'abyss_e',
+  '심해 거인':     'guardian_e',
+  '볼-헤르찬':     'void_e',
+  '바이욘':        'berserk_e',
+};
+
+const STATUS_DEF={
+  poison:{name:'독',    emoji:'☠',turns:5,pct:0.04},
+  burn:  {name:'화상',  emoji:'🔥',turns:3,dmg:18},
+  bleed: {name:'출혈',  emoji:'🩸',turns:4,pct:0.03},
+  freeze:{name:'빙결',  emoji:'❄',turns:1},
+};
+const EQ_SLOTS={
+  weapon:{name:'주무기',emoji:'⚔'},
+  shield:{name:'방패',emoji:'🛡'},
+  helmet:{name:'투구',emoji:'🪖'},
+  armor:{name:'갑옷',emoji:'🧥'},
+  boots:{name:'장화',emoji:'👢'},
+  ring:{name:'반지',emoji:'💍'},
+  bracelet:{name:'팔찌',emoji:'📿'},
+};
+
+const EQ_ITEMS={
+  // ── 무기 (weapon) ──
+  axe_1:  {name:'바바리안 철봉',   slot:'weapon', str:5,              price:100,  floor:1, desc:'STR +5'},
+  axe_1b: {name:'뼈 도끼',         slot:'weapon', str:8,def:1,        price:160,  floor:2, desc:'STR +8 DEF +1'},
+  axe_2:  {name:'전사의 철퇴',      slot:'weapon', str:18,def:2,       price:450,  floor:2, desc:'STR +18 DEF +2 | 공격 시 15% 출혈'},
+  axe_2b: {name:'혼돈의 단검',      slot:'weapon', str:28,def:2,       price:900,  floor:3, desc:'STR +28 DEF +2 | HP 50%↓ 시 출혈'},
+  axe_3:  {name:'크라울의 악마분쇄기',slot:'weapon',str:42,def:3,      price:2000, floor:4, desc:'STR +42 DEF +3'},
+  axe_3b: {name:'불꽃 손도끼',      slot:'weapon', str:58,            price:4200, floor:4, desc:'STR +58 | 공격 시 20% 화상'},
+  axe_4:  {name:'공성 살육자',      slot:'weapon', str:75,def:4,       price:9500, floor:5, desc:'STR +75 DEF +4 | HP 90%↑ 시 STR×1.5'},
+  axe_5:  {name:'심층 파괴자',      slot:'weapon', str:92,def:5,       price:16000,floor:6, desc:'STR +92 DEF +5 | 공격 시 25% 출혈'},
+  axe_6:  {name:'어둠의 대검',      slot:'weapon', str:100,def:5,      price:20000,floor:7, desc:'STR +100 DEF +5 | 강타 피해 +20%', ps_bonus:0.2},
+
+  // ── 방패 (shield) ──
+  shd_1:  {name:'나무 방패',        slot:'shield', def:4,             price:80,   floor:1, desc:'DEF +4'},
+  shd_1b: {name:'강화 방패',        slot:'shield', def:10,mdef:3,     price:320,  floor:2, desc:'DEF +10 MDEF +3'},
+  shd_2:  {name:'수호병단의 징표',   slot:'shield', def:22,            price:850,  floor:3, desc:'DEF +22'},
+  shd_2b: {name:'쐐기 방패',        slot:'shield', def:32,mdef:8,     price:2200, floor:4, desc:'DEF +32 MDEF +8'},
+  shd_3:  {name:'마법 방패',        slot:'shield', def:48,mdef:16,    price:8000, floor:5, desc:'DEF +48 MDEF +16 | 피격 시 5% 분노 회복'},
+  shd_3b: {name:'용의 비늘 방패',   slot:'shield', def:65,mdef:22,    price:15500,floor:6, desc:'DEF +65 MDEF +22 | 피격 시 10% 분노 회복'},
+  shd_4:  {name:'아이기스의 장벽',   slot:'shield', def:80,mdef:30,    price:21000,floor:7, desc:'DEF +80 MDEF +30 | 5턴마다 자동 철벽'},
+
+  // ── 투구 (helmet) ──
+  helm_1: {name:'가죽 투구',        slot:'helmet', def:3,hp:30,       price:90,   floor:1, desc:'DEF +3 MaxHP +30'},
+  helm_1b:{name:'철 머리띠',        slot:'helmet', def:8,             price:280,  floor:2, desc:'DEF +8'},
+  helm_2: {name:'철 투구',          slot:'helmet', def:18,hp:80,      price:750,  floor:3, desc:'DEF +18 MaxHP +80'},
+  helm_2b:{name:'전투 투구',        slot:'helmet', def:28,hp:120,     price:2000, floor:4, desc:'DEF +28 MaxHP +120 | 분노 충전 +50%'},
+  helm_3: {name:'강철의 화관',      slot:'helmet', str:6,def:42,hp:200,price:8500,floor:5, desc:'STR +6 DEF +42 MaxHP +200'},
+  helm_3b:{name:'서리 왕관 (모조품)',slot:'helmet', def:55,mdef:20,hp:280,price:15000,floor:6,desc:'DEF +55 MDEF +20 MaxHP +280'},
+  helm_4: {name:'고뇌의 화관',      slot:'helmet', def:68,mdef:28,hp:380,price:20500,floor:7,desc:'DEF +68 MDEF +28 MaxHP +380'},
+
+  // ── 갑옷 (armor) ──
+  arm_1:  {name:'가죽 갑옷',        slot:'armor',  def:5,hp:40,       price:110,  floor:1, desc:'DEF +5 MaxHP +40'},
+  arm_2:  {name:'쇠 갑옷',          slot:'armor',  def:14,hp:80,      price:380,  floor:2, desc:'DEF +14 MaxHP +80'},
+  arm_3:  {name:'강철 갑옷',        slot:'armor',  def:28,hp:150,     price:1100, floor:3, desc:'DEF +28 MaxHP +150'},
+  arm_4:  {name:'전사의 판금갑옷',   slot:'armor',  def:48,mdef:8,hp:230,price:2800,floor:4,desc:'DEF +48 MDEF +8 MaxHP +230'},
+  arm_5:  {name:'아이기스의 용갑',   slot:'armor',  def:72,mdef:16,hp:340,price:9000,floor:5,desc:'DEF +72 MDEF +16 MaxHP +340'},
+  arm_6:  {name:'심층 수호자의 갑옷',slot:'armor',  def:95,mdef:24,hp:460,price:16500,floor:6,desc:'DEF +95 MDEF +24 MaxHP +460'},
+  arm_7:  {name:'심층왕의 흉갑 (모조품)',slot:'armor',def:118,mdef:32,hp:580,price:22000,floor:7,desc:'DEF +118 MDEF +32 MaxHP +580'},
+
+  // ── 장화 (boots) ──
+  boot_1: {name:'전사의 장화',      slot:'boots',  def:2,hp:25,       price:75,   floor:1, desc:'DEF +2 MaxHP +25'},
+  boot_2: {name:'철벽 장화',        slot:'boots',  def:8,             price:300,  floor:2, desc:'DEF +8'},
+  boot_3: {name:'황야의 장화',      slot:'boots',  def:18,hp:80,mdef:4,price:1000,floor:3, desc:'DEF +18 MaxHP +80 MDEF +4 | 공격 시 분노 +3', rage_bonus:3},
+  boot_4: {name:'심층 탐험화',      slot:'boots',  def:32,hp:140,str:5,price:2600,floor:4, desc:'DEF +32 MaxHP +140 STR +5 | 매 턴 분노 +5', rage_regen:5},
+  boot_5: {name:'폭풍의 장화',      slot:'boots',  def:52,hp:240,str:8,price:8800,floor:5, desc:'DEF +52 MaxHP +240 STR +8 | 매 턴 분노 +8', rage_regen:8},
+  boot_6: {name:'심연의 발걸음',    slot:'boots',  def:70,hp:360,str:12,price:16000,floor:6,desc:'DEF +70 MaxHP +360 STR +12 | 매 턴 분노 +12', rage_regen:12},
+  boot_7: {name:'심층 지배자의 발굽',slot:'boots',  def:88,hp:480,str:16,price:21500,floor:7,desc:'DEF +88 MaxHP +480 STR +16 | 매 턴 분노 +15', rage_regen:15},
+
+  // ── 반지 (ring) ──
+  ring_1: {name:'힘의 반지',        slot:'ring',   str:5,             price:100,  floor:1, desc:'STR +5'},
+  ring_2: {name:'반딧불 반지',       slot:'ring',   hp:60,             price:120,  floor:2, desc:'MaxHP +60'},
+  ring_3: {name:'탐험가의 반지',     slot:'ring',   str:12,def:8,      price:800,  floor:3, ess_inc:20,   desc:'STR +12 DEF +8 | 마석 획득 +20%'},
+  ring_4: {name:'오크 영주의 인장',  slot:'ring',   str:20,def:14,     price:2500, floor:4, desc:'STR +20 DEF +14'},
+  ring_5: {name:'심연의 반지',       slot:'ring',   str:30,def:22,mdef:12,price:9500,floor:5,desc:'STR +30 DEF +22 MDEF +12 | 강타 피해 +15%', ps_bonus:0.15},
+  ring_6: {name:'용의 심장 반지',    slot:'ring',   str:42,def:30,mdef:18,price:17000,floor:6,desc:'STR +42 DEF +30 MDEF +18'},
+  ring_7: {name:'심층왕의 인장',     slot:'ring',   str:55,def:40,mdef:25,price:22500,floor:7,desc:'STR +55 DEF +40 MDEF +25 | 강타 피해 +20%', ps_bonus:0.2},
+
+  // ── 팔찌 (bracelet) ──
+  brace_1:{name:'분노의 팔찌',      slot:'bracelet',hp:50,            price:80,   floor:1, desc:'MaxHP +50'},
+  brace_2:{name:'수호의 팔찌',      slot:'bracelet',def:5,hp:80,      price:350,  floor:2, desc:'DEF +5 MaxHP +80'},
+  brace_3:{name:'전사의 신뢰',      slot:'bracelet',def:10,hp:140,str:6,price:900, floor:3, desc:'DEF +10 MaxHP +140 STR +6'},
+  brace_4:{name:'수호자의 맹세',    slot:'bracelet',def:18,mdef:10,hp:220,str:10,price:2400,floor:4,desc:'DEF +18 MDEF +10 MaxHP +220 STR +10'},
+  brace_5:{name:'심층 수호 팔찌',   slot:'bracelet',def:28,mdef:18,hp:340,price:9200,floor:5,desc:'DEF +28 MDEF +18 MaxHP +340'},
+  brace_6:{name:'고대 수호자의 서약',slot:'bracelet',def:40,mdef:28,hp:480,price:17500,floor:6,desc:'DEF +40 MDEF +28 MaxHP +480'},
+  brace_7:{name:'심연의 계약',      slot:'bracelet',def:52,mdef:38,hp:620,price:23000,floor:7,desc:'DEF +52 MDEF +38 MaxHP +620'},
+
+
+  // ── 추가 장비: HP 세팅 / STR 세팅 / 정수 세팅 ──
+
+  // [무기] 1층: STR보다 HP 중심 초반 버전
+  axe_1c: {name:'묵직한 통나무 곤봉',  slot:'weapon', str:4,hp:80,        price:130,  floor:1, desc:'STR +4 MaxHP +80 | 힘보단 버팀'},
+
+  // [무기] 2층: 마석(정수) 드랍 중심 곡괭이
+  axe_2c: {name:'탐험가의 곡괭이',     slot:'weapon', str:14,def:2,       price:520,  floor:2, ess_bonus:12, desc:'STR +14 DEF +2 | 정수 드랍 +12%'},
+
+  // [무기] 4층: 마석 채굴도끼 (STR을 정수 드랍과 교환)
+  axe_3c: {name:'마석 채굴도끼',       slot:'weapon', str:32,def:3,       price:2300, floor:4, ess_bonus:18, desc:'STR +32 DEF +3 | 정수 드랍 +18% | 강타 대신 수확'},
+
+  // [무기] 6층: 방어형 대검 (STR↓ DEF↑)
+  axe_5b: {name:'철벽 대검',           slot:'weapon', str:65,def:24,      price:17500,floor:6, desc:'STR +65 DEF +24 | DEF에 무게를 준 무기'},
+
+  // [방패] 2층: HP 방패 (DEF 대신 체력)
+  shd_2c: {name:'두꺼운 목재 방패',    slot:'shield', def:10,hp:160,      price:420,  floor:2, desc:'DEF +10 MaxHP +160 | 방어력보단 버팀'},
+
+  // [투구] 1층: STR 중심 두건 (DEF 없음)
+  helm_1c:{name:'바바리안 두건',        slot:'helmet', str:5,hp:60,        price:100,  floor:1, desc:'STR +5 MaxHP +60 | DEF 없음, 공격 중심'},
+
+  // [투구] 3층: 정수 드랍 탐험모
+  helm_2c:{name:'탐험가의 탐사모',      slot:'helmet', def:10,hp:70,       price:850,  floor:3, ess_bonus:10, desc:'DEF +10 MaxHP +70 | 정수 드랍 +10%'},
+
+  // [갑옷] 1층: 극 HP 망토 (DEF 거의 없음)
+  arm_1b: {name:'털가죽 망토',          slot:'armor',  hp:150,def:2,       price:120,  floor:1, desc:'MaxHP +150 DEF +2 | 방어보단 체력'},
+
+  // [갑옷] 3층: STR+HP 공격형 경갑
+  arm_3b: {name:'공격형 경갑',          slot:'armor',  str:12,hp:100,def:14,price:1250,floor:3, desc:'STR +12 MaxHP +100 DEF +14 | 공격 중심'},
+
+  // [장화] 2층: 정수 경량화 장화
+  boot_2b:{name:'가벼운 탐험화',        slot:'boots',  def:5,hp:40,        price:320,  floor:2, ess_bonus:8,  desc:'DEF +5 MaxHP +40 | 정수 드랍 +8%'},
+
+  // [반지] 1층: HP 반지
+  ring_1b:{name:'원기의 반지',          slot:'ring',   hp:90,              price:110,  floor:1, desc:'MaxHP +90 | 힘 대신 생명력'},
+
+  // [반지] 5층: 마석 수입 중급
+  ring_5b:{name:'약탈자의 반지',        slot:'ring',   hp:80,              price:9000, floor:5, ess_inc:25,   desc:'MaxHP +80 | 마석 획득 +25% | STR/DEF 없음'},
+
+  // [반지] 7층: 마석 수입 최고급
+  ring_7b:{name:'황금 약탈자의 반지',   slot:'ring',   hp:120,str:10,      price:22000,floor:7, ess_inc:30,   desc:'MaxHP +120 STR +10 | 마석 획득 +30%'},
+
+  // [팔찌] 1층: STR 집중 밴드
+  brace_1b:{name:'힘의 철 밴드',        slot:'bracelet',str:9,             price:100,  floor:1, desc:'STR +9 | 순수 공격력 | HP 없음'},
+
+  // [팔찌] 3층: 정수 드랍 수집가 팔찌
+  brace_3b:{name:'수집가의 손목걸이',   slot:'bracelet',hp:130,            price:1050, floor:3, ess_bonus:15, desc:'MaxHP +130 | 정수 드랍 +15%'},
+
+  // [팔찌] 5층: 고급 정수 수집 팔찌
+  brace_5b:{name:'탐험가의 황금 팔찌',  slot:'bracelet',hp:180,str:6,      price:9800, floor:5, ess_inc:25,   desc:'MaxHP +180 STR +6 | 마석 획득 +25%'},
+
+
+  // ── 마석 수입 보너스 장비 ──
+
+  // [무기] 5층: 약탈자의 창 (마석 수입 특화)
+  axe_5c: {name:'약탈자의 창',          slot:'weapon', str:55,def:5,       price:16000,floor:5, ess_inc:20,   desc:'STR +55 DEF +5 | 마석 획득 +20%'},
+
+  // [갑옷] 5층: 탐험가의 외투 (마석+HP)
+  arm_5b: {name:'탐험가의 외투',         slot:'armor',  str:5,hp:200,def:18, price:14000,floor:5, ess_inc:15,   desc:'STR +5 MaxHP +200 DEF +18 | 마석 획득 +15%'},
+
+  // [투구] 5층: 황금 탐험모 (고급 마석 수입)
+  helm_5b:{name:'황금 탐험모',            slot:'helmet', def:18,hp:90,       price:13000,floor:5, ess_inc:18,   desc:'DEF +18 MaxHP +90 | 마석 획득 +18%'},
+
+  // [장화] 4층: 약탈자의 군화 (마석 수입)
+  boot_4b:{name:'약탈자의 군화',          slot:'boots',  str:10,def:12,      price:3200, floor:4, ess_inc:15,   desc:'STR +10 DEF +12 | 마석 획득 +15%'},
+
+  // ── 보스 전리품 (상점 판매 불가, boss:true) ──
+  boss_1_axe:  {name:'광전사의 전쟁도끼', slot:'weapon',  str:15,def:3,           floor:1, price:200,  boss:true, desc:'STR +15 DEF +3 | 🏆고블린 광전사 전리품'},
+  boss_2_helm: {name:'2층 전사의 투구',  slot:'helmet',  str:10,def:16,hp:70,    floor:2, price:600,  boss:true, desc:'STR +10 DEF +16 MaxHP +70 | 🏆2층 보스 전리품'},
+  boss_2g_crown:{name:'고블린 제왕의 가시왕관',slot:'helmet',  str:10,def:14,hp:70,  floor:2, price:700,  boss:true, desc:'STR +10 DEF +14 MaxHP +70 | 🏆고블린 제왕 전리품'},
+  boss_2b_claw: {name:'야수 군주의 어금니 팔찌',slot:'bracelet',str:14,mdef:8,hp:80,  floor:2, price:700,  boss:true, desc:'STR +14 MDEF +8 MaxHP +80 | 🏆야수 군주 전리품'},
+  boss_2d_shield:{name:'오크 영웅의 철패',    slot:'shield',  str:6,def:24,mdef:10,  floor:2, price:700,  boss:true, desc:'STR +6 DEF +24 MDEF +10 | 🏆오크 히어로 전리품'},
+  boss_2u_armor: {name:'데스나이트의 흑강 갑옷',slot:'armor',   def:28,mdef:15,hp:90, floor:2, price:700,  boss:true, desc:'DEF +28 MDEF +15 MaxHP +90 | 🏆데스나이트 전리품'},
+  boss_3_ring: {name:'오크 대전사의 갑반',slot:'bracelet',str:15,mdef:20,hp:120, floor:3, price:1500, boss:true, desc:'STR +15 MDEF +20 MaxHP +120 | 🏆오크 대전사 전리품'},
+  boss_4_arm:  {name:'트롤 원시 갑옷',   slot:'armor',   def:68,mdef:20,hp:220,  floor:4, price:3500, boss:true, desc:'DEF +68 MDEF +20 MaxHP +220 | 🏆트롤 전리품'},
+  crack_castle_shield:{name:'성채의 저주 방패',slot:'shield', def:22,mdef:8,      floor:2, price:900,  crack:true,desc:'DEF +22 MDEF +8 | 🌀핏빛 성채 균열 전리품'},
+  crack_tomb_armor:   {name:'철인의 강철 갑옷',slot:'armor',  def:26,str:6,        floor:2, price:850,  crack:true,desc:'DEF +26 STR +6 | 🌀강철의 묘 균열 전리품'},
+  boss_5_helm: {name:'서리 왕관',        slot:'helmet',  str:10,def:65,mdef:28,  floor:5, price:9500, boss:true, desc:'STR +10 DEF +65 MDEF +28 | 5층 보스 전리품'},
+  boss_6_wpn:  {name:'파수꾼의 검',      slot:'weapon',  str:108,def:8,          floor:6, price:17000,boss:true, desc:'STR +108 DEF +8 | 6층 보스 전리품'},
+  boss_7_ring: {name:'심연의 인장',      slot:'ring',    str:65,def:50,mdef:35,  floor:7, price:23000,boss:true, desc:'STR +65 DEF +50 MDEF +35 | 7층 보스 전리품'},
+  boss_8_arm:  {name:'심층왕의 흉갑',    slot:'armor',   def:140,mdef:45,hp:700, floor:8, price:30000,boss:true, desc:'DEF +140 MDEF +45 MaxHP +700 | 8층 보스 전리품'},
+  // ── 균열 전리품 (crack:true, 상점 판매 불가) ──
+  crack_frost_ring:{name:'빙하굴 서리 반지', slot:'ring',   str:12,mdef:10,def:6, floor:3, price:900, crack:true, desc:'STR +12 MDEF +10 DEF +6 | 🌀균열 전리품'},
+  crack_mine_helm: {name:'녹색 탄광 철 투구',slot:'helmet', def:18,hp:80,str:5,  floor:3, price:800, crack:true, desc:'DEF +18 MaxHP +80 STR +5 | 🌀균열 전리품'}
+};
+let G;
+function ig(){
+  return{
+    floor:1,step:0,total:FE[1],turn:0,kills:0,ess:30000,
+    party:[],phase:'explore',enemies:[],target:0,isBoss:false,npcDone:false,shopEq:null,pendingBossItems:[],engravings:{str:0,def:0,mdef:0},buffs:[],edebuffs:[],pStatus:[],pFrozen:false,level:1,sp:0,nextLevel:5,runes:[],runeSlots:1,pendingEssences:[],sentinelUsed:false,skills:['sk_방패밀치기'],firstKills:{},exp:0,nextLevelExp:10,tavernPool:null,compEss:{},maxFloor:1,erwen:false,raven:false,autoBattle:false,inCrack:false,crackType:null,crackStep:0,crackTotal:4,_crackVictory:null,region:null,
+    eq:{weapon:null,shield:null,helmet:null,armor:null,boots:null,ring:null,bracelet:null},
+    absorbed:{},
+    inv:{
+      hp_s:{name:'소형 체력 물약',emoji:'🧪',desc:'HP 200 회복',c:5},
+      hp_m:{name:'중형 체력 물약',emoji:'🍶',desc:'HP 1000 회복',c:1},
+      hp_l:{name:'대형 체력 물약',emoji:'🏺',desc:'HP 3000 회복',c:0},
+      ess_c:{name:'분노 결정',emoji:'💢',desc:'분노 25 충전',c:1},
+      tent:{name:'텐트',emoji:'⛺',desc:'야영 시 HP 30% 회복',c:0},
+      campfire:{name:'모닥불 키트',emoji:'🔥',desc:'야영 시 HP 전량 회복 + 분노+30',c:0},
+    },
+    p:{hp:200,mhp:200,es:0,mes:0,rage:0,str:35,def:20,mdef:5},
+  };
+}
+const E=id=>document.getElementById(id);
+function log(msg,cls){const d=document.createElement('div');d.className='le '+(cls||'');const _e=msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');d.innerHTML=_e.replace(/\[([^\]]+)\]/g,'<b class="ltag">[$1]</b>');E('lb').prepend(d);while(E('lb').children.length>120)E('lb').lastChild.remove();}
+function ui(){
+  const p=G.p;
+  E('hpv').textContent=Math.max(0,p.hp);E('mhv').textContent='/ '+p.mhp;
+  E('hpb').style.width=Math.max(0,p.hp/p.mhp*100)+'%';
+  E('rgv').textContent=Math.floor(p.rage);E('rgb').style.width=p.rage+'%';
+  E('stv').textContent=p.str;E('dfv').textContent=p.def;E('mdfv').textContent=p.mdef;
+  E('lvv').textContent='Lv.'+G.level;E('nxtlv').textContent='EXP '+(G.exp||0)+'/'+(G.nextLevelExp||10);
+  E('tev').textContent=G.ess;E('kcv').textContent=G.kills;
+  E('rdi').textContent=p.rage>=100?'🔥 분노 충전됨!':'';
+  // Rune panel
+  E('runeslotv').textContent='('+G.runes.length+'/'+G.runeSlots+')';
+  if(G.runes.length===0){E('runelist').innerHTML='<div style="color:var(--muted)">정수 없음</div>';}
+  else{E('runelist').innerHTML=G.runes.map(r=>'<div style="margin-bottom:3px">'+ESSENCES[r].emoji+' <b>'+ESSENCES[r].name+'</b><span style="color:var(--muted);font-size:.9em"> — '+ESSENCES[r].desc+'</span></div>').join('');}
+  E('flb').textContent=G.floor+'층';
+  E('prf').style.width=(G.step/G.total*100)+'%';
+  E('prt').textContent=G.step+' / '+G.total;
+  const bd=E('bfd');bd.innerHTML='';
+  G.buffs.forEach(b=>{const s=document.createElement('span');s.className='bb';s.textContent=b.name+'('+b.turns+')';bd.appendChild(s);});
+  G.pStatus.forEach(st=>{const s=document.createElement('span');s.className='db';s.textContent=st.emoji+' '+st.name+'('+st.turns+')';bd.appendChild(s);});
+  const pl=E('pl');
+  if(!G.party.length){pl.innerHTML='<div style="color:var(--muted);font-size:.82em;">아직 동료가 없다.</div>';}
+  else{pl.innerHTML='';G.party.forEach(m=>{const _sc=(m.id==='erwen'||m.id==='raven')?(G.maxFloor||1)*20:0;const _eff=(m.str||0)+_sc;const _note=_sc>0?'<span style="color:#60a5fa;font-size:.7em"> 층보정+'+_sc+'</span>':'';const d=document.createElement('div');d.className='pm';d.innerHTML='<div class="pmn">'+m.emoji+' '+m.name+'</div><div class="pmd">STR <b style="color:var(--gold)">'+_eff+'</b>'+_note+'</div>';pl.appendChild(d);});}
+  const il=E('il');const has=Object.values(G.inv).filter(i=>i.c>0);
+  if(!has.length){il.innerHTML='<div style="color:var(--muted);font-size:.82em;">비어있음</div>';}
+  else{il.innerHTML='';Object.values(G.inv).forEach(it=>{if(!it.c)return;const d=document.createElement('div');d.className='is';d.innerHTML='<span>'+it.emoji+' '+it.name+'</span><span class="ic">x'+it.c+'</span>';il.appendChild(d);});}
+  const eql=E('eql');eql.innerHTML='';
+  Object.entries(EQ_SLOTS).forEach(([slot,def])=>{
+    const eqId=G.eq[slot];const item=eqId?EQ_ITEMS[eqId]:null;
+    const d=document.createElement('div');d.className='is';
+    d.innerHTML='<span style="color:var(--muted)">'+def.emoji+' '+def.name+'</span><span class="ic" style="color:'+(item?'var(--gold)':'#555')+'">'+(item?item.name:'—')+'</span>';
+    eql.appendChild(d);
+  });
+}
+function sc(h){E('sc3').innerHTML=h;}
+function sa(btns){
+  E('ab').innerHTML='';E('skm').style.display='none';E('itm').style.display='none';
+  btns.forEach(b=>{const btn=document.createElement('button');btn.className='btn '+(b.cls||'bs');btn.textContent=b.text;if(b.dis)btn.disabled=true;btn.onclick=b.fn;E('ab').appendChild(btn);});
+}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+// ── 세이브/로드 시스템 ──
+const SV_KEY='bjorn_save_v1';
+function saveGame(){
+  if(!G||G.phase==='dead'||G.phase==='clear'||G.phase==='battle'||G.phase==='levelup')return;
+  try{localStorage.setItem(SV_KEY,JSON.stringify(G));}catch(e){}
+}
+function clearSave(){try{localStorage.removeItem(SV_KEY);}catch(e){}}
+function hasSave(){try{return!!localStorage.getItem(SV_KEY);}catch(e){return false;}}
+function _svLabel(d){
+  const FLOOR_NAMES=['','수정동굴','짐승소굴','순례자의 길','천공의 탑','대마경','대해','암흑대륙','여명의 땅'];
+  const fn=d.floor===2&&d.region?(REGION_NAMES[d.region]||'2층'):FLOOR_NAMES[d.floor]||d.floor+'층';
+  return fn+' '+d.step+'/'+d.total+'단계 | Lv.'+d.level+' | 마석 '+d.ess+' | HP '+d.p.hp+'/'+d.p.mhp;
+}
+function newGame(){
+  if(hasSave()&&!confirm('저장된 데이터가 있습니다.\n새 게임을 시작하면 기존 세이브가 삭제됩니다.\n계속할까요?'))return;
+  clearSave();
+  E('is2').style.display='none';G=ig();log('━━━━━ 라프도니아에 도착 ━━━━━','ls');ui();showVillage();
+}
+function loadSave(){
+  try{
+    const sv=localStorage.getItem(SV_KEY);
+    if(!sv){alert('저장 파일 없음');return;}
+    G=JSON.parse(sv);
+    // 이름/아이콘 마이그레이션 (구버전 저장 데이터 호환)
+    if(G.party)G.party.forEach(m=>{
+      if(m.id==='raven'){m.name='레이븐';m.emoji='🔮';}
+      if(m.id==='erwen'){m.name='에르웬';m.emoji='🌿';}
+    });
+    // 전투 중 저장이었다면 탐험 상태로 복구
+    if(G.phase==='battle'||G.phase==='levelup'){G.phase='explore';G.enemies=[];G.target=0;G.isBoss=false;}
+    // 균열 중이었다면 균열 중단
+    if(G.inCrack){G.inCrack=false;G.crackType=null;G.crackStep=0;G._crackVictory=null;}
+    E('is2').style.display='none';
+    log('━━━━━ 저장된 게임 이어하기 ━━━━━','ls');
+    ui();showVillage();
+  }catch(e){
+    alert('세이브 파일 로드 실패. 새 게임으로 시작합니다.');
+    clearSave();E('is2').style.display='none';G=ig();log('━━━━━ 라프도니아에 도착 ━━━━━','ls');ui();showVillage();
+  }
+}
+function startGame(){E('is2').style.display='none';G=ig();log('━━━━━ 라프도니아에 도착 ━━━━━','ls');ui();showVillage();}
+function restartGame(){clearSave();E('go').classList.remove('act');E('cl').classList.remove('act');E('lb').innerHTML='';G=ig();log('━━━━━ 재도전 ━━━━━','ls');ui();floorIntro();}
+function floorIntro(){
+  const tx={1:'수정동굴 — 벽과 천장을 뒤덮은 수정들이 차갑게 빛난다. 칼날늑대의 울음소리가 사방에서 울려 퍼진다.',2:'짐승소굴 — 퀴퀴한 짐승 냄새와 뼈 부서지는 소리. 이 어둠 속 무언가가 숨을 죽이고 기다리고 있다.',3:'순례자의 길 — 오래된 석판 위로 이끼가 자란다. 저 멀리 마녀의 숲이 안개 속에 잠겨 있다.',4:'천공의 탑 — 끝이 보이지 않을 만큼 높은 탑. 계단마다 봉인된 마법이 잠들어 있다.',5:'대마경 — 마력이 공기 자체를 뒤틀어 놓았다. 한 걸음마다 중력이 달라지는 마계의 경계.',6:'대해 — 지하 깊숙이 펼쳐진 내해. 알 수 없는 심해 생물들이 암흑 속을 유영한다.',7:'암흑대륙 — 어둠이 살아 움직인다. 심연의 기운이 스며든다.',8:'여명의 땅 — 미궁의 심장부. 이 끝에 모든 것이 있다.'};
+  const _FE={1:'💎',2:'🐾',3:'🛤️',4:'🏯',5:'🌑',6:'🌊',7:'🕳️',8:'🌅'};
+  const _FBG={
+    1:'linear-gradient(160deg,#1a0800 0%,#3d1500 50%,#1a0800 100%)',
+    2:'linear-gradient(160deg,#0a1500 0%,#1e3300 50%,#0a1500 100%)',
+    3:'linear-gradient(160deg,#1a001f 0%,#35003d 50%,#1a001f 100%)',
+    4:'linear-gradient(160deg,#3d0a00 0%,#200000 50%,#3d0a00 100%)',
+    5:'linear-gradient(160deg,#00102d 0%,#001a40 50%,#00102d 100%)',
+    6:'linear-gradient(160deg,#001020 0%,#001a2f 50%,#001020 100%)',
+    7:'linear-gradient(160deg,#0a001a 0%,#180030 50%,#0a001a 100%)',
+    8:'linear-gradient(160deg,#1a0000 0%,#330000 50%,#1a0000 100%)'
+  };
+  const _fe=G.floor===2&&G.region?REGION_EMOJI[G.region]:(_FE[G.floor]||'🗺');
+  const _fbg=G.floor===2&&G.region?REGION_BGS[G.region]:(_FBG[G.floor]||'linear-gradient(160deg,#111,#222)');
+  const _banner='<div style="width:100%;height:180px;border-radius:10px;margin-bottom:14px;background:'+_fbg+';display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 40px rgba(0,0,0,.6)">'
+    +'<div style="font-size:5em;filter:drop-shadow(0 2px 12px rgba(255,200,50,.3))">'+_fe+'</div>'
+    +'<div style="color:rgba(201,168,76,.6);font-size:.8em;margin-top:4px;letter-spacing:2px">'+G.floor+'층&nbsp;—&nbsp;'+(G.floor===2&&G.region?(REGION_EMOJI[G.region]+' '+REGION_NAMES[G.region]):(['','수정동굴','짐승소굴','순례자의 길','천공의 탑','대마경','대해','암흑대륙','여명의 땅'][G.floor]||''))+'</div>'
+    +'</div>';
+  const _floorName=G.floor===2&&G.region?
+    (REGION_EMOJI[G.region]+' '+REGION_NAMES[G.region]):
+    (['','수정동굴','짐승소굴','순례자의 길','천공의 탑','대마경','대해','암흑대륙','여명의 땅'][G.floor]||G.floor+'층');
+  const _floorDesc=G.floor===2&&G.region?REGION_DESC[G.region]:(tx[G.floor]||'');
+  sc(_banner+'<div class="et">'+G.floor+'층: '+_floorName+'</div><div class="st">'+_floorDesc+'<br><br><span style="color:var(--muted);font-size:.85em">이 층에서 <span class="hl">'+G.total+'개</span>의 구역을 통과해야 차원문이 열린다.</span></div>');
+  sa([
+    {text:'탐험 시작 ▶',cls:'bp',fn:nextEv},
+    {text:'⚡ 자동전투로 시작',cls:'bs',fn:()=>{G.autoBattle=true;log('⚡ 자동전투 시작 — 보스 처치까지 자동 공격','ls');nextEv();}},
+  ]);
+}
+function nextEv(){
+  E('sb').onclick=null;E('sb').style.cursor='';
+  G.step++;ui();
+  if(G.step>G.total){showBoss();return;}
+  // 1층에서 10% 확률로 균열 포탈 생성 (균열 중에는 불가)
+  if(G.floor===1&&G.step===5&&!G.erwen){showErwenJoin1F();return;}
+  if(G.floor===1&&!G.inCrack&&rnd(1,100)<=5){showCrackPortal();return;}
+  startCombat(false);
+}
+function showCrackPortal(){
+  sc('<div class="ei">🌀</div><div class="et">균열 포탈 출현!</div>'
+    +'<div class="st">대지가 흔들리며 어둠의 포탈이 나타났다!<br><br>'
+    +'<span style="color:var(--muted);font-size:.82em">균열은 독자적인 공간입니다. 보스까지 처치해야 탈출할 수 있습니다.</span></div>');
+  sa([
+    {text:'🧊 빙하굴 진입 — 2.5층 난이도',cls:'bp',fn:()=>enterCrack('frost')},
+    {text:'⛏ 녹색 탄광 진입 — 2.5층 난이도',cls:'bp',fn:()=>enterCrack('mine')},
+    {text:'🏰 핏빛 성채 진입 — 3층 난이도 (위험!)',cls:'bp',fn:()=>enterCrack('castle')},
+    {text:'⚙️ 강철의 묘 진입 — 2.5층 난이도',cls:'bp',fn:()=>enterCrack('tomb')},
+    {text:'↩ 무시하고 탐험 계속',cls:'bd',fn:()=>startCombat(false)},
+  ]);
+}
+function enterCrack(type){
+  if(type==='castle'&&!G.raven){showRavenJoinCastle();return;}
+  G.inCrack=true;G.crackType=type;G.crackStep=0;G._midBossDone=false;
+  const cd=CRACK_DATA[type];
+  // 균열 스테이지 수: 현재층+1.5에 해당하는 FE 평균
+  const _FEM={1:6,2:7,3:7,4:8,5:8,6:9,7:9,8:10};
+  const _cf1=G.floor+1,_cf2=G.floor+2;
+  G.crackTotal=Math.round((_FEM[_cf1]+(_FEM[_cf2]||_FEM[_cf1]))/2)+1;
+  log('🌀 균열 진입: '+cd.name,'ls');
+  sc('<div class="ei">'+cd.emoji+'</div><div class="et">'+cd.name+'</div>'
+    +'<div class="st">'+cd.intro+'<br><br>'
+    +'<span style="color:var(--muted);font-size:.82em">⚠ 균열 내 몬스터는 필드보다 강합니다. 전투 '+(G.crackTotal-1)+'회 후 보스가 등장합니다.</span></div>');
+  sa([{text:'▶ 진입!',cls:'bp',fn:crackNextRoom}]);
+}
+function crackNextRoom(){
+  E('sb').onclick=null;E('sb').style.cursor='';
+  G.crackStep++;ui();
+  if(G.crackStep>G.crackTotal){// 비정상 초과 — 복구
+    G.inCrack=false;G.crackType=null;G.crackStep=0;nextEv();return;
+  }
+  if(G.crackStep===G.crackTotal){
+    // 보스 방 안내
+    const cd=CRACK_DATA[G.crackType];
+    const b=cd.boss;
+    sc('<div class="ei">'+b.emoji+'</div><div class="et">균열의 수호자!</div>'
+      +'<div class="st"><span class="hl">'+b.name+'</span><br>등급: '
+      +'★'.repeat(b.grade)+'☆'.repeat(5-b.grade)
+      +'<br><br>균열의 가장 깊은 곳에서 수호자가 등장했다.</div>');
+    sa([{text:'⚔ 수호자와 전투!',cls:'bp',fn:()=>{
+      E('lb').innerHTML='';
+      G.phase='battle';G.turn=0;G._t1shown=false;G.isBoss=true;G.sentinelUsed=false;
+      const boss=JSON.parse(JSON.stringify(b));
+      boss.stunned=false;boss.status=[];boss._enraged=false;boss._rewarded=false;
+      G.enemies=[boss];G.target=0;
+      log('──── 균열 보스: '+b.name+' ────','lw');
+      renderBattle();
+    }}]);
+    return;
+  }
+  // 중간보스 체크
+  const cd=CRACK_DATA[G.crackType];
+  if(cd.midBoss&&G.crackStep===Math.ceil(G.crackTotal/2)&&!G._midBossDone){
+    G._midBossDone=true;
+    const mb=cd.midBoss;
+    sc('<div class="ei">'+mb.emoji+'</div><div class="et">⚠ 중간보스 등장!</div>'
+      +'<div class="st"><span class="hl">'+mb.name+'</span><br>등급: '
+      +'★'.repeat(mb.grade)+'☆'.repeat(5-mb.grade)
+      +'<br><br>균열 깊숙한 곳에서 강력한 수호자가 나타났다!</div>');
+    sa([{text:'⚔ 중간보스와 전투!',cls:'bp',fn:()=>{
+      E('lb').innerHTML='';
+      G.phase='battle';G.turn=0;G._t1shown=false;G.isBoss=false;G.sentinelUsed=false;
+      const m=JSON.parse(JSON.stringify(mb));
+      m.stunned=false;m.status=[];m._enraged=false;m._rewarded=false;
+      G.enemies=[m];G.target=0;
+      log('──── 중간보스: '+mb.name+' 등장! ────','lw');
+      renderBattle();
+    }}]);
+    return;
+  }
+  // 일반 균열 전투 방
+  const pool=cd.monsters;
+  const roll=rnd(1,10);
+  const count=roll<=3?2:1;
+  E('lb').innerHTML='';
+  G.phase='battle';G.turn=0;G._t1shown=false;G.isBoss=false;G.sentinelUsed=false;
+  G.enemies=[];
+  for(let i=0;i<count;i++){
+    const m=JSON.parse(JSON.stringify(pool[rnd(0,pool.length-1)]));
+    m.stunned=false;m.status=[];m._enraged=false;m._rewarded=false;
+    G.enemies.push(m);
+  }
+  G.target=0;
+  log('──── [균열 '+G.crackStep+'/'+(G.crackTotal-1)+'] '+G.enemies.map(e=>e.name).join(' / ')+' 등장! ────','');
+  renderBattle();
+}
+function showCrackVictory(crackType){
+  const cd=CRACK_DATA[crackType];
+  log('🌀 균열 정복! '+cd.name+' 클리어!','ls');
+  sc('<div class="ei">✨</div><div class="et">균열 정복!</div>'
+    +'<div class="st"><b style="color:var(--gold)">'+cd.name+'</b> 수호자를 쓰러뜨렸다!<br><br>'
+    +'포탈이 열려 던전으로 귀환한다.</div>');
+  sa([{text:'← 던전으로 귀환',cls:'bp',fn:()=>{
+    ui();
+    sc('<div class="ei">⚔</div><div class="et">균열에서 귀환!</div>'
+      +'<div class="st">'+cd.name+' 정복 완료. 탐험을 계속한다.</div>');
+    sa([{text:'계속 탐험',cls:'bp',fn:nextEv}]);
+  }}]);
+}
+// Multi-monster helpers
+function te(){return G.enemies[G.target];}
+function livingE(){return G.enemies.filter(e=>e.hp>0);}
+function allDead(){return G.enemies.length>0&&G.enemies.every(e=>e.hp<=0);}
+function pickTarget(){
+  if(G.enemies[G.target]&&G.enemies[G.target].hp>0)return;
+  for(let i=0;i<G.enemies.length;i++){if(G.enemies[i].hp>0){G.target=i;return;}}
+}
+function setTarget(i){if(G.enemies[i]&&G.enemies[i].hp>0){G.target=i;renderBattle();}}
+function monsterXP(e){
+  const t={
+    // F1 (total=13, 80%=10)
+    '슬라임':1,'버섯 요정':1,
+    '고블린':2,'와이번 새끼':2,'고블린 궁수':2,'도둑 쥐':2,
+    '동굴 거대 거미':3,
+    // F2 (total=25, 80%=20)
+    '오크':3,'칼날늑대':3,'독안개':3,'뼈 갑사':3,'오크 전사':4,'거대 거미':4,
+    '오크 족장':5,
+    // F3 (total=50, 80%=40)
+    '리자드맨':7,'시체골렘':7,'번개 정령':7,'화염 늑대':6,'오크 대주술사':8,'거대 독거미':7,
+    '스톰거쉬 우두머리':8,
+    // F4 (total=88, 80%=70)
+    '하프 트롤':13,'데스나이트':13,'홀 거인':12,'어둠 사냥꾼':12,'뱀파이어 수호자':14,'오크 히어로':14,
+    '드래곤킨 수호자':10,
+    // F5 (total=138, 80%=110)
+    '트롤':20,'빙하 늑대':20,'서리 마법사':20,'서리군주의 선봉대':21,'오우거':21,'만티코어':22,
+    '서리군주 이글라시르':14,
+    // F6 (total=200, 80%=160)
+    '뱀파이어 로드':29,'벨라리오스':28,'죽음의 기사':29,'석상 골렘':30,'심해 거인':30,'어둠 파수꾼':32,
+    '심층 파수꾼':22,
+    // F7 (total=275, 80%=220)
+    '바이욘':40,'심연의 눈':38,'고대 드래곤 새끼':40,'환영 기사':42,'어비살 콜로서스':42,'심층 마물':42,
+    '어둠의 지배자':31,
+    // F8 (total=363, 80%=290)
+    '불사 기사':53,'혼돈의 마물':55,'카오스 마법사':55,'심층 뱀파이어':55,'원시의 드래곤':54,'절망의 골렘':58,
+    '미궁의 주인 — 심층왕':33,
+    // 균열 몬스터 (2.5층 기준 XP)
+    '서리 늑대':6,'예티':7,'아이스 골렘':7,'아이스 오크 주술사':7,
+    '고블린 광부':6,'광물 슬라임':6,'홉고블린 광부':7,'코퍼 골렘':7,
+    '폭군 타룬바스':12,'킹 슬라임':12,
+  };
+  return t[e.name]||(e.grade?e.grade*2:2);
+}
+function killEnemy(e){
+  if(e._rewarded)return;e._rewarded=true;
+  e.stunned=false; // 사망 시 스턴 제거
+  G.kills++;
+  // 마석 수입: 기본 + 장비 ess_inc 합산 (% 보너스)
+  const _essInc=Object.values(G.eq).reduce((s,id)=>{const _ei=EQ_ITEMS[id];return s+(_ei&&_ei.ess_inc||0);},0);
+  const _essGain=_essInc>0?Math.round(e.essence*(1+_essInc/100)):e.essence;
+  G.ess+=_essGain;
+  const _essLog=_essInc>0?'━ '+e.name+' 처치! 마석 +'+_essGain+' (×'+(1+_essInc/100).toFixed(2)+') ━':'━ '+e.name+' 처치! 마석 +'+_essGain+' ━';
+  log(_essLog,'lr');
+  // First-kill XP (each unique monster name gives XP only once)
+  if(!G.firstKills[e.name]){
+    G.firstKills[e.name]=true;
+    const xp=monsterXP(e);
+    G.exp=(G.exp||0)+xp;
+    log('📘 첫 처치! '+e.name+' EXP +'+xp,'ls');
+
+  }
+  // Essence absorption chance (no potion drops from regular monsters)
+  // 정수 드랍: 기본 20% + 장비 ess_bonus 합산 (최대 90%)
+  const _essBns=Object.values(G.eq).reduce((s,id)=>{const _ei=EQ_ITEMS[id];return s+(_ei&&_ei.ess_bonus||0);},0);
+  if(rnd(1,100)<=Math.min(90,20+_essBns))applyME(e);
+  ui();
+}
+function checkDeaths(){G.enemies.forEach(e=>{if(e.hp<=0&&!e._rewarded)killEnemy(e);});}
+function addEnemyStatusTo(enemy,id){
+  const def=STATUS_DEF[id];if(!def)return;
+  if(!enemy.status)enemy.status=[];
+  enemy.status=enemy.status.filter(s=>s.id!==id);
+  enemy.status.push({id,name:def.name,emoji:def.emoji,turns:def.turns});
+}
+function addEnemyStatus(id){if(te())addEnemyStatusTo(te(),id);}
+function processEnemyStatusOn(e){
+  if(!e.status||!e.status.length)return false;
+  let killed=false;
+  e.status=e.status.map(s=>{
+    const def=STATUS_DEF[s.id];
+    if(s.id==='poison'){const d=Math.floor(e.maxHp*def.pct);e.hp-=d;log('☠ 독('+e.name+'): -'+d,'lpd');if(e.hp<=0)killed=true;}
+    else if(s.id==='burn'){e.hp-=def.dmg;log('🔥 화상('+e.name+'): -'+def.dmg,'lpd');if(e.hp<=0)killed=true;}
+    else if(s.id==='bleed'){const d=Math.floor(e.maxHp*def.pct);e.hp-=d;log('🩸 출혈('+e.name+'): -'+d,'lpd');if(e.hp<=0)killed=true;}
+    else if(s.id==='freeze'){e.stunned=true;log('❄ '+e.name+' 빙결!','lr');}
+    s.turns--;return s;
+  }).filter(s=>s.turns>0);
+  return killed;
+}
+function startCombat(isBoss){
+  E('lb').innerHTML='';
+  G.phase='battle';G.turn=0;G._t1shown=false;G.isBoss=isBoss;G.sentinelUsed=false;
+  if(isBoss){
+    const boss=JSON.parse(JSON.stringify(getFloorBoss()));
+    boss.stunned=false;boss.status=[];boss._enraged=false;boss._rewarded=false;
+    G.enemies=[boss];G.target=0;
+    log('──── 보스 등장: '+boss.name+' ────','lw');
+  }else{
+    const pool=getEnemyPool();
+    const roll=rnd(1,10);
+    const count=roll===1?3:roll<=4?2:1;
+    G.enemies=[];
+    for(let i=0;i<count;i++){
+      const m=JSON.parse(JSON.stringify(pool[rnd(0,pool.length-1)]));
+      m.stunned=false;m.status=[];m._enraged=false;m._rewarded=false;
+      G.enemies.push(m);
+    }
+    G.target=0;
+    log('──── '+G.enemies.map(e=>e.name).join(' / ')+' 등장! ────','');
+  }
+  renderBattle();
+}
+function renderBattle(){
+  if(!G.enemies.length)return;
+  const cur=te();if(!cur)return;
+  if(G.turn===0&&!G._t1shown){G._t1shown=true;log('━━━━ ⚔ 1턴 ⚔ ━━━━','lt');}
+  // Enemy cards
+  let cards='<div class="ecards">';
+  G.enemies.forEach((e,i)=>{
+    const dead=e.hp<=0;
+    const active=i===G.target&&!dead;
+    const hpPct=Math.max(0,e.hp/e.maxHp*100);
+    const stHtml=(e.status&&e.status.length)
+      ?'<div style="display:flex;flex-wrap:wrap;gap:2px;justify-content:center;margin:2px 0">'+e.status.map(s=>'<span style="font-size:.6em;color:#f87171;border:1px solid #f87171;border-radius:2px;padding:0 2px">'+s.emoji+s.name+'('+s.turns+')</span>').join('')+'</div>'
+      :'';
+    const stunTag=e.stunned?'<div style="color:#a78bfa;font-size:.6em;border:1px solid #a78bfa;border-radius:2px;padding:0 3px;margin:2px auto;display:inline-block">💜 스턴</div>':'';
+    const _monImg=e.img
+      ?'<img src="'+e.img+'" style="width:72px;height:72px;object-fit:contain;border-radius:4px;'+(dead?'filter:grayscale(1) opacity(.4)':'')+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'">'
+       +'<div style="font-size:2.5em;display:none">'+e.emoji+'</div>'
+      :'<div style="font-size:2.5em">'+e.emoji+'</div>';
+    cards+='<div class="ecard'+(active?' ecard-a':'')+(dead?' ecard-d':'')+'" onclick="setTarget('+i+')">'
+      +_monImg
+      +'<div style="font-size:.75em;font-weight:bold;color:'+(dead?'#555':'var(--gold)')+'">'+e.name+'</div>'
+      +'<div style="font-size:.65em;color:var(--muted)">'+'★'.repeat(e.grade)+(e.magic?' ✦':'')+'</div>'
+      +stunTag
+      +'<div style="font-size:.7em;color:'+(dead?'#555':'var(--text)')+'">'+Math.max(0,e.hp)+'/'+e.maxHp+'</div>'
+      +'<div style="background:#333;border-radius:2px;height:4px;margin:3px 0 2px"><div style="background:'+(dead?'#555':'var(--red)')+';height:100%;border-radius:2px;width:'+hpPct+'%;transition:width .3s"></div></div>'
+      +'<div>'+stHtml+(active&&!dead?'<span style="color:var(--gold);font-size:.7em"> ◀</span>':'')+'</div>'
+      +'</div>';
+  });
+  cards+='</div>';
+  const _hpPct=Math.max(0,Math.min(100,G.p.hp/G.p.mhp*100)).toFixed(1);
+  const _rgPct=Math.max(0,Math.min(100,G.p.rage)).toFixed(1);
+  const _hudBar=
+    '<div style="display:flex;gap:6px;align-items:center;padding:6px 10px;background:#111;border-radius:6px;margin-bottom:8px;font-size:.82em">'
+    +'<span style="color:var(--red)">❤</span>'
+    +'<div style="flex:2;background:#2a0000;border-radius:3px;height:11px;overflow:hidden">'
+      +'<div style="background:var(--red);height:100%;border-radius:3px;width:'+_hpPct+'%;transition:width .3s"></div></div>'
+    +'<span style="color:var(--red);font-size:.78em;white-space:nowrap;min-width:52px;text-align:right">'+G.p.hp+'/'+G.p.mhp+'</span>'
+    +'<span style="color:var(--rage);margin-left:6px">🔥</span>'
+    +'<div style="flex:1;background:#2a1000;border-radius:3px;height:11px;overflow:hidden">'
+      +'<div style="background:var(--rage);height:100%;border-radius:3px;width:'+_rgPct+'%;transition:width .3s"></div></div>'
+    +'<span style="color:var(--rage);font-size:.78em;min-width:28px;text-align:right">'+G.p.rage+'</span>'
+    +'</div>';
+  // 버프/디버프 스트립
+  const _bfItems=[
+    ...G.buffs.map(b=>{const nm=b.name||(b.id==='lifeburst'?'생명폭발':b.id==='giant'?'거대화':b.id);const suf=b.turns!==undefined?'('+b.turns+')':b.amount!==undefined?'['+b.amount+']':'';return{t:nm+suf,c:'#34d399'};}),
+    ...G.pStatus.map(s=>({t:s.emoji+s.name+'('+s.turns+')',c:'#f87171'})),
+    ...G.edebuffs.filter(b=>b.id==='wc').map(b=>({t:'⬇적공격-30%('+b.turns+')',c:'#fbbf24'})),
+    ...(G.pFrozen?[{t:'❄빙결',c:'#93c5fd'}]:[]),
+  ];
+  const _bfBar='<div style="min-height:46px;display:flex;flex-wrap:wrap;gap:3px;padding:3px 8px;font-size:.68em;align-content:flex-start;box-sizing:border-box">'+_bfItems.map(b=>'<span style="background:#1c1c2e;border:1px solid #333;border-radius:3px;padding:1px 5px;color:'+b.c+'">'+b.t+'</span>').join('')+'</div>';
+  sc(_hudBar+_bfBar+cards);
+  if(G.pFrozen){
+    if(G.autoBattle){G.pFrozen=false;setTimeout(()=>{if(G.phase==='battle'){partyAtk();checkDeaths();if(allDead()){win();return;}eTurn();if(G.phase==='battle')renderBattle();}},300);return;}
+    sa([{text:'❄ 빙결 — 비요른 행동 불가 (동료 활동 중)',cls:'bd',fn:()=>{G.pFrozen=false;partyAtk();checkDeaths();if(!allDead()){eTurn();if(G.phase==='battle')renderBattle();}}}]);return;
+  }
+  if(G.autoBattle){
+    sa([{text:'⚡ 자동전투 중 — 탭하여 해제',cls:'bd',fn:()=>{G.autoBattle=false;log('⚡ 자동전투 해제','ls');renderBattle();}}]);
+    setTimeout(()=>{if(G.autoBattle&&G.phase==='battle')pAtk();},300);
+    return;
+  }
+  sa([
+    {text:'공격',cls:'bp',fn:pAtk},
+    {text:'스킬',cls:'bs',fn:()=>{const m=E('skm');m.style.display=m.style.display==='flex'?'none':'flex';}},
+    {text:'아이템',cls:'bs',fn:()=>{const m=E('itm');m.style.display=m.style.display==='flex'?'none':'flex';}},
+  ]);
+  renderSkillMenu();renderItemMenu();
+}
+function skSalPoint(){
+  if(G.phase!=='battle')return;
+  const cost=Math.floor(G.p.mhp*0.10);
+  if(G.p.hp<=cost+1){log('[살점폭파] HP가 부족해 사용 불가','lw');return;}
+  G.p.hp-=cost;
+  const e=te();if(!e)return;
+  const d=Math.max(1,Math.floor(e.hp*0.15));
+  e.hp-=d;
+  log('[살점폭파] 살점을 폭파! '+e.name+' '+d+' 피해 (적 현재HP 15%, HP -'+cost+')','lsk');
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  eTurn();
+}
+function skToxicCloud(){
+  if(G.p.rage<20||G.phase!=='battle')return;
+  G.p.rage-=20;
+  let hit=0;
+  G.enemies.filter(e=>e.hp>0).forEach(e=>{
+    if(rnd(1,100)<=75){addEnemyStatusTo(e,'poison');hit++;}
+  });
+  log('[독 살포] 독 안개를 분사! '+hit+'마리 중독! — 턴 소비 없음','lsk');
+  ui();renderBattle();
+}
+function skFlashStrike(){
+  if(G.p.rage<30||G.phase!=='battle')return;
+  G.p.rage-=30;
+  const e=te();if(!e)return;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  let total=0;
+  for(let i=0;i<2;i++){let d=dmg(Math.floor(atkStr*1.0),e.def);d=applyStrAwk(d);e.hp-=d;total+=d;}
+  log('[섬광 질주] 번개처럼 달려 2연타! 총 '+total+' 피해','lsk');
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  eTurn();
+}
+function skThunderBurst(){
+  if(G.p.rage<45||G.phase!=='battle')return;
+  G.p.rage-=45;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  let total=0;
+  G.enemies.filter(e=>e.hp>0).forEach(e=>{
+    let d=dmg(Math.floor(atkStr*0.9),e.def);d=applyStrAwk(d);e.hp-=d;total+=d;
+    e.stunned=true;
+  });
+  log('[전기 폭발] 번개 폭풍! 전체 '+total+' 피해 + 스턴','lsk');
+  checkDeaths();partyAtk();checkDeaths();
+  if(allDead()){win();return;}
+  pickTarget();eTurn();
+}
+function skLifeBurst(){
+  if(G.phase!=='battle')return;
+  const cost=Math.floor(G.p.mhp*0.20);
+  if(G.p.hp<=cost){log('[생명 폭발] HP가 부족해 사용 불가','lw');return;}
+  G.p.hp-=cost;
+  const rageGain=Math.min(100-G.p.rage,50);
+  G.p.rage=Math.min(100,G.p.rage+50);
+  log('[생명 폭발] HP -'+cost+' → 분노 +'+rageGain+' [턴 소비 없음]','lsk');
+  ui();renderBattle();
+}
+function skBloodSpike(){
+  if(G.p.rage<30||G.phase!=='battle')return;
+  G.p.rage-=30;
+  const e=te();if(!e)return;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  let d=dmg(Math.floor(atkStr*1.2),e.def);d=applyStrAwk(d);
+  e.hp-=d;
+  const heal=Math.floor(d*0.30);
+  G.p.hp=Math.min(G.p.mhp,G.p.hp+heal);
+  log('[흡혈송곳] '+e.name+' '+d+' 피해 / HP +'+heal+' 흡혈','lsk');
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  eTurn();
+}
+function skGiant(){
+  if(G.p.rage<60||G.phase!=='battle')return;
+  if(G.buffs.some(b=>b.id==='giant')){log('[거대화] 이미 거대화 상태! 중복 사용 불가.','lw');return;}
+  G.p.rage-=60;
+  G.buffs.push({id:'giant',turns:2,name:'거대화',_origStr:G.p.str,_origDef:G.p.def});
+  G.p.str=G.p.str*2;
+  G.p.def=G.p.def*2;
+  log('[거대화] 몸이 거대해진다! STR ×2 / DEF ×2 (2턴) — 턴 소비 없음','lsk');
+  ui();renderBattle();
+}
+function skSwing(){
+  if(G.p.rage<40||G.phase!=='battle')return;
+  G.p.rage-=40;
+  const e=te();if(!e)return;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  let d=dmg(Math.floor(atkStr*2.2),e.def);d=applyStrAwk(d);
+  e.hp-=d;
+  log('[휘두르기] '+e.name+' '+d+' 피해','lsk');
+  if(e.hp<=0){G.p.rage=Math.min(100,G.p.rage+20);log('처치! 분노 +20 환급','ls');}
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  eTurn();
+}
+function skWildBurst(){
+  if(G.p.rage<70||G.phase!=='battle')return;
+  G.p.rage-=70;
+  G.buffs=G.buffs.filter(b=>b.id!=='sr');
+  G.buffs.push({id:'sr',turns:2});
+  const heal=Math.floor(G.p.mhp*0.10);
+  G.p.hp=Math.min(G.p.mhp,G.p.hp+heal);
+  log('[야생 폭발] STR×2 2턴! HP +'+heal+' — 턴 소비 없음','lsk');
+  ui();renderBattle();
+}
+function skIronWall(){
+  if(G.p.rage<35||G.phase!=='battle')return;
+  G.p.rage-=35;
+  G.buffs=G.buffs.filter(b=>b.id!=='is');
+  G.buffs.push({id:'is',turns:2});
+  log('[철벽] 피해 70% 감소 (2턴) — 턴 소비 없음','lsk');
+  ui();renderBattle();
+}
+function renderSkillMenu(){
+  const p=G.p;E('skm').innerHTML='';
+  if(!G.skills||!G.skills.length){
+    E('skm').innerHTML='<div style="color:var(--muted);font-size:.82em;padding:10px 0">스킬 없음 — 정수 습득 시 스킬 개방</div>';
+    return;
+  }
+  G.skills.forEach(sid=>{
+    const sk=ACTIVE_SKILLS[sid];if(!sk)return;
+    const b=document.createElement('button');
+    b.className='btn bs';
+    const disabled=sk.cost?sk.cost(G):false;
+    b.textContent=sk.name+' — '+sk.desc;
+    if(disabled)b.disabled=true;
+    else b.onclick=window[sk.fn];
+    E('skm').appendChild(b);
+  });
+}
+function renderItemMenu(){
+  E('itm').innerHTML='';
+  const items=Object.entries(G.inv).filter(([,v])=>v.c>0);
+  if(!items.length){E('itm').innerHTML='<div style="color:var(--muted);padding:8px">비어있음</div>';return;}
+  items.forEach(([k,it])=>{const b=document.createElement('button');b.className='btn bs';b.textContent=it.emoji+' '+it.name+' ('+it.desc+') x'+it.c;b.onclick=()=>useItem(k);E('itm').appendChild(b);});
+}
+function dmg(atk,def){return Math.max(1,atk-Math.floor(def*0.5)+rnd(0,5));}
+function applyStrAwk(d){
+  const _awk=getAwkLevel('str');
+  if(_awk>0){const _r=rnd(1,100);let _m=1;if(_r<=20)_m=2;else if(_r<=40&&_awk>=2)_m=3;else if(_r<=60&&_awk>=3)_m=4;if(_m>1){d=Math.floor(d*_m);log('⚔ [힘의 각인 각성'+_awk+'차] 강타! ×'+_m,'lw');}}
+  return d;
+}
+function pAtk(){
+  if(G.phase!=='battle')return;
+  const e=te();if(!e)return;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const _berserk=hasRune('berserk')&&G.p.hp<G.p.mhp*0.40;
+  let atkStr=sr?Math.floor(G.p.str*(_berserk?3.0:1.5)):(G.p.str*(_berserk?1.5:1));
+  if(hasEq('axe_4')&&G.p.hp>=G.p.mhp*0.9){atkStr=Math.floor(atkStr*1.5);log('[공성 살육자] 최고조! STR×1.5','lo');}
+  const _voidDef=hasRune('void')?Math.floor(e.def*0.65):e.def;
+  let d=dmg(atkStr,_voidDef);
+  d=applyStrAwk(d); // 힘의 각인 각성 적용
+  // void rune applied
+  const _rb=hasEq('boot_3')?3:(hasEq('boot_4')?5:0);G.p.rage=Math.min(100,G.p.rage+6+_rb);
+  // lifesteal rune
+  if(hasRune('lifesteal')){const h=Math.floor(d*0.20);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('🩸 흡혈: HP +'+h,'lo');}
+  // abyss rune: bonus % max HP damage
+  if(hasRune('abyss')&&e.hp>0){const ab=Math.floor(e.maxHp*0.05);e.hp-=ab;log('🌑 심연: +'+ab+' 추가피해','lo');}
+  // toxic rune: 30% chance poison (중독)
+  if(hasRune('toxic')&&rnd(1,100)<=30&&e.hp>0){addEnemyStatusTo(e,'poison');
+    const _tr=G.runes.map(r=>ESSENCES[r]).find(es=>es&&es.effect==='toxic');
+    log('☠ ['+(_tr?_tr.emoji+_tr.name:'독인장')+'] '+e.name+' 중독!','lo');}
+  // spider_boss rune: 25% chance paralyze
+  if(hasRune('spider_boss')&&rnd(1,100)<=25&&e.hp>0){e.stunned=true;log('🕷 독거미 인장! '+e.name+' 마비!','lo');}
+  // storm rune: 15% chain AoE
+  if(hasRune('chain')&&rnd(1,100)<=15&&livingE().length>1){
+    const _sr=G.buffs.find(b=>b.id==='sr');const _cs=_sr?Math.floor(G.p.str*2):G.p.str;
+    livingE().forEach(en=>{if(en!==e){const cd=dmg(Math.floor(_cs*0.4),en.def);en.hp-=cd;log('⚡ 연쇄: '+en.name+' '+cd,'lo');}});
+  }
+  e.hp-=d;log('🪓 비요른이 공격! '+e.name+'에게 '+d+' 피해.','lp');
+  // dragon_boss rune: 공격 시 25% 흡혈
+  if(hasRune('dragon_boss')&&e.hp>0){
+    const _dr=G.runes.map(r=>ESSENCES[r]).find(ess=>ess&&ess.effect==='dragon_boss');
+    const dd=Math.max(1,Math.floor(d*(_dr?_dr.val:0.25)));
+    G.p.hp=Math.min(G.p.mhp,G.p.hp+dd);log('🐉 [비늘심] '+dd+' 흡혈!','lo');
+  }
+  // frost_boss rune: 공격 시 20% 빙결
+  if(hasRune('frost_boss')&&e.hp>0){
+    const _fr=G.runes.map(r=>ESSENCES[r]).find(ess=>ess&&ess.effect==='frost_boss');
+    const _fv=Math.round((_fr?_fr.val:0.20)*100);
+    if(rnd(1,100)<=_fv){addEnemyStatusTo(e,'freeze');log('❄ [서리심] '+e.name+' 빙결!','lo');}
+  }
+  // sentinel_boss rune: 30% 방어 무시 추가 피해
+  if(hasRune('sentinel_boss')&&e.hp>0&&rnd(1,100)<=30){
+    const sd=Math.max(1,Math.floor(G.p.str*0.7));e.hp-=sd;log('🛡 [파수꾼] 방어무시! '+sd+' 추가 피해','lp');
+  }
+  if(hasEq('axe_2')&&rnd(1,100)<=15){addEnemyStatusTo(e,'bleed');log('[야만의 도끼] 출혈 부여!','lw');}
+  checkDeaths();partyAtk();checkDeaths();
+  if(allDead()){win();return;}
+  pickTarget();eTurn();
+}
+function partyAtk(){
+  const alive=livingE();if(!alive.length)return;
+  G.party.forEach(m=>{
+    const e=alive[rnd(0,alive.length-1)];
+    if(m.id==='raven'){
+      const _bossX=G.isBoss?2:1;
+      // 마나충전 상태 확인 (소모는 공격 발동 시에만)
+      const _charged=!!m.manaCharged;
+
+      // 층수 스케일링 STR: 클리어 층당 +20
+      const _baseStr=m.str+(G.maxFloor||1)*20;
+      const _rvStr=_charged?Math.floor(_baseStr*2):_baseStr;
+      // 화염구 타겟: 현재 타겟(te()) 우선, 없으면 랜덤
+      const _rvTgt=()=>{const _t=te();const _lv=livingE();return(_t&&_t.hp>0)?_t:(_lv.length?_lv[rnd(0,_lv.length-1)]:null);};
+      const _rv=rnd(1,100);
+      if(_rv<=40){
+        // 화염구: 단일 기본 데미지 — 공격 시 충전 소모
+        m.manaCharged=false;
+        const _ea=_rvTgt();if(!_ea)return;
+        const _d=Math.max(1,Math.floor(dmg(_rvStr,_ea.def)*_bossX));
+        _ea.hp-=_d;
+        log('🔮 '+m.name+' [화염구'+(G.isBoss?' 보스×2':'')+(_charged?' 마나충전×2':'')+'] '+_ea.name+'에게 '+_d+' 피해!','lsk');
+      } else if(_rv<=60){
+        // 화염폭풍: 전체 기본 데미지 — 공격 시 충전 소모
+        m.manaCharged=false;
+        let _tot=0;
+        livingE().forEach(en=>{const _d=Math.max(1,Math.floor(dmg(_rvStr,en.def)*_bossX));en.hp-=_d;_tot+=_d;});
+        log('🔮 '+m.name+' [화염폭풍'+(G.isBoss?' 보스×2':'')+(_charged?' 마나충전×2':'')+'] 전체 '+_tot+' 피해!','lsk');
+      } else if(_rv<=70){
+        // 냉기폭풍: 전체 데미지 + 스턴 — 공격 시 충전 소모
+        m.manaCharged=false;
+        let _tot=0;
+        livingE().forEach(en=>{const _d=Math.max(1,Math.floor(dmg(_rvStr,en.def)*_bossX));en.hp-=_d;_tot+=_d;en.stunned=true;});
+        log('🔮 '+m.name+' [냉기폭풍'+(G.isBoss?' 보스×2':'')+(_charged?' 마나충전×2':'')+'] 전체 '+_tot+' 피해 + 스턴!','lsk');
+      } else if(_rv<=80){
+        // 마법장벽: 충전 시 2배 장벽 + 충전 소모
+        if(_charged){m.manaCharged=false;}
+        const _sCnt=G.buffs.filter(b=>b.id==='raven_shield').length;
+        if(_sCnt<3){
+          const _sAmt=50*(G.floor||1)*(_charged?2:1);
+          G.buffs.push({id:'raven_shield',name:'마법장벽',amount:_sAmt});
+          log('🔮 '+m.name+' [마법장벽] '+_sAmt+' 흡수막'+(_charged?' [마나충전×2]':'')+' ('+(_sCnt+1)+'중첩)','lsk');
+        } else {
+          log('🔮 '+m.name+' [마법장벽] 최대 중첩 — 마나충전으로 전환','lsk');
+        }
+      } else {
+        // 마나충전: 다음 턴 STR×2 (기존 충전 중이어도 교체)
+        m.manaCharged=true;
+        log('✨ '+m.name+' [마나충전] 힘을 모은다... (다음 공격 STR×2)','lsk');
+      }
+    }
+    if(m.id==='erwen'){
+      const _av=livingE();if(_av.length){
+        // 층수 스케일링 STR: 클리어 층당 +20
+        const _ewStr=m.str+(G.maxFloor||1)*20;
+        // 단일 공격 타겟: 현재 타겟(te()) 우선, 없으면 랜덤
+        const _ewTgt=()=>{const _t=te();return(_t&&_t.hp>0)?_t:_av[rnd(0,_av.length-1)];};
+        const _roll=rnd(1,100);
+        if(_roll<=10){
+          // 정령소환: 전체 1.5x, 마법형 0.8x
+          let _tot=0;
+          livingE().forEach(en=>{
+            const _mu=en.magic?2.5:1.5;
+            const _d=Math.max(1,Math.floor(_ewStr*_mu));
+            en.hp-=_d;_tot+=_d;
+          });
+          log('🌿 '+m.name+' [정령소환] 전체 '+_tot+' 피해! (마법형 ×2.5)','lsk');
+        } else if(_roll<=50){
+          // 조준: 2x (마법형 3x) — 현재 타겟 우선
+          const _ea=_ewTgt();
+          const _mu=_ea.magic?3:2;
+          const _d=Math.max(1,Math.floor(dmg(_ewStr,_ea.def)*_mu));
+          _ea.hp-=_d;
+          log('🌿 '+m.name+' [조준'+(_mu===3?' 마법 강점 ×3':' ×2')+'] '+_ea.name+'에게 '+_d+' 피해!','lsk');
+        } else {
+          // 평타: 1x (마법형 1.5x) — 현재 타겟 우선
+          const _ea=_ewTgt();
+          const _mu=_ea.magic?1.5:1;
+          const _d=Math.max(1,Math.floor(dmg(_ewStr,_ea.def)*_mu));
+          _ea.hp-=_d;
+          log('🌿 '+m.name+' '+_ea.name+'에게 '+_d+' 피해!'+(_ea.magic?' (마법형 ×1.5)':''),'');
+        }
+      }
+    }
+    if(m.id==='amelia'&&rnd(1,100)<=80){
+      const d1=rnd(18,42);e.hp-=d1;
+      if(rnd(1,100)<=25){const d2=rnd(18,42);e.hp-=d2;log(m.name+' 도플갱어 2연타: '+d1+'+'+d2,'lsk');}
+      else{log(m.name+' 암습: '+d1,'lsk');}
+    }
+    if(m.id==='ainar'&&rnd(1,100)<=80){const d=rnd(20,42);e.hp-=d;log(m.name+' 창 찌르기: '+d,'lsk');}
+    if(m.id==='misha'&&rnd(1,100)<=80){
+      if(rnd(1,100)<=25){
+        let tot=0;livingE().forEach(en=>{const d=rnd(10,24);en.hp-=d;tot+=d;if(rnd(1,100)<=20){addEnemyStatusTo(en,'freeze');log('[미샤] '+en.name+' 빙결!','lw');}});
+        log(m.name+' [서리 폭풍] 모든 적 광역 공격: 총 '+tot,'lsk');
+      }else{
+        const d=Math.floor(rnd(14,32)*fm);e.hp-=d;log(m.name+' 서리 공격: '+d,'lp');
+        if(rnd(1,100)<=20){addEnemyStatusTo(e,'freeze');log('[미샤] 빙결 부여!','lw');}
+      }
+    }
+    // hired tavern companions
+    if(m.hired){
+      const av2=livingE();if(!av2.length)return;
+      // 스킬 발동 시도 먼저 — 성공하면 기본공격 생략
+      let didSkill=false;let _atkTgt=null;
+      if(m.cls==='초보 모험가'&&rnd(1,100)<=m.skillChance){
+        const _bgCnt=G.buffs.filter(b=>b.id==='bodyguard').length;
+        if(_bgCnt<2)G.buffs.push({id:'bodyguard',name:'대신맞기',turns:1});
+        log(m.emoji+' '+m.name+' [대신맞기] 이번 턴 적 공격 50% 감소!'+(_bgCnt>=1?' ×'+Math.min(_bgCnt+1,2):''),'lsk');
+        didSkill=true;
+      } else if(m.cls==='초보 검사'&&rnd(1,100)<=m.skillChance){
+        // 마구휘두르기: str*0.8 광역 피해 (전체 적)
+        const aoeD=Math.max(1,Math.floor(m.str*0.8));
+        let tot=0;
+        livingE().forEach(en=>{en.hp-=aoeD;tot+=aoeD;});
+        log(m.emoji+' '+m.name+' [마구휘두르기] 전체 '+aoeD+' 광역! (총 '+tot+')','lsk');
+        _atkTgt=av2[rnd(0,av2.length-1)];didSkill=true;
+      } else if(m.cls==='초보 사냥꾼'&&rnd(1,100)<=m.skillChance){
+        const ea3=av2[rnd(0,av2.length-1)];
+        const d=Math.max(1,Math.floor(dmg(m.str,ea3.def)*1.5));
+        ea3.hp-=d;log(m.emoji+' '+m.name+' [조준] '+ea3.name+'에게 '+d+' 피해!','lsk');
+        _atkTgt=ea3;didSkill=true;
+      }
+      if(!didSkill){
+        const ea2=av2[rnd(0,av2.length-1)];
+        const d=Math.max(1,dmg(m.str,ea2.def));
+        ea2.hp-=d;log(m.emoji+' '+m.name+' 공격: '+d+' 피해!','');
+        _atkTgt=ea2;
+      }
+      if(_atkTgt)compEssProc(m,_atkTgt);
+    }
+  });
+}
+function eTurn(){
+  if(G.phase!=='battle')return;
+  if(allDead()){win();return;} // 안전 체크: 이미 전원 사망이면 승리
+  G.turn++;
+  // regen 정수: 각 정수 val 개별 처리 (재생각인 3%, 젤라틴핵 2% 별도)
+  if(G.phase==='battle'){G.runes.forEach(rid=>{const _re=ESSENCES[rid];if(_re&&_re.effect==='regen'){const rh=Math.floor(G.p.mhp*_re.val);G.p.hp=Math.min(G.p.mhp,G.p.hp+rh);log('💚 '+_re.name+': HP +'+rh,'lo');}});}
+  // vampire rune: drain 2% from each living enemy every 3 turns
+  if(hasRune('vampire')&&G.turn%3===0&&G.phase==='battle'){
+    livingE().forEach(en=>{const v=Math.floor(en.maxHp*0.02);en.hp-=v;G.p.hp=Math.min(G.p.mhp,G.p.hp+v);log('🦇 흡혈: '+en.name+' -'+v+' HP → 비요른 +'+v,'lo');});
+  }
+  G.party.forEach(m=>{
+    if(m.id==='karin'&&G.turn%2===0){const h=Math.floor(rnd(38,60));G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('카린 치유: HP +'+h,'lc');}
+    if(m.id==='ainar'&&G.turn%3===0){const rageGain=20;G.p.rage=Math.min(100,G.p.rage+rageGain);log('아이나르 전투 기합! 분노 +'+rageGain,'lc');}
+  });
+  if(hasEq('shd_4')&&G.turn%5===0){G.buffs=G.buffs.filter(b=>b.id!=='is');G.buffs.push({id:'is',name:'아이기스 자동방어',turns:1});log('🛡 아이기스의 방패 자동 발동!','lc');}
+  const is=G.buffs.find(b=>b.id==='is');
+  const bgBuf=G.buffs.find(b=>b.id==='bodyguard');
+  const wcHit=G.edebuffs.find(b=>b.id==='wc');
+  const _beforeBuffs=G.buffs.map(b=>({...b}));
+  G.buffs=G.buffs.map(b=>{if(b.id!=='bodyguard'&&b.id!=='raven_shield')b.turns--;return b;}).filter(b=>b.id==='bodyguard'||b.id==='raven_shield'||b.turns>0);
+  const _giantExpired=_beforeBuffs.find(b=>b.id==='giant'&&b.turns===1);
+  if(_giantExpired){G.p.str=_giantExpired._origStr||Math.floor(G.p.str/2);G.p.def=_giantExpired._origDef||Math.floor(G.p.def/2);log('[거대화] 효과 종료 — 원래 체형으로 복귀','lc');}
+  if(wcHit)G.edebuffs=G.edebuffs.filter(b=>b.id!=='wc');
+  const snap=livingE();
+  for(const e of snap){
+    if(processEnemyStatusOn(e)){checkDeaths();if(allDead()){win();return;}}
+  }
+  for(const e of livingE()){
+    if(e.stunned){log(e.name+' '+'스턴으로 행동 불가!','lr');e.stunned=false;continue;}
+    const spcs=Array.isArray(e.spc)?e.spc:(e.spc?[e.spc]:[]);
+    let doDouble=false,doDevour=false,drainPct=0;
+    spcs.forEach(sp=>{
+      if(sp.type==='regen'&&G.turn%sp.every===0){const h=sp.val;e.hp=Math.min(e.maxHp,e.hp+h);log(e.name+' '+'재생! HP +'+h,'lr');}
+      if(sp.type==='enrage'&&sp.at50&&!e._enraged&&e.hp<=e.maxHp*0.5){e.str+=sp.bonus;e._enraged=true;log(e.name+' '+'격분! STR +'+sp.bonus+'!','lr');}
+      if(sp.type==='doublehit'&&G.turn%sp.every===0)doDouble=true;
+      if(sp.type==='devour'&&G.turn%sp.every===0)doDevour=true;
+      if(sp.type==='drain')drainPct=sp.pct;
+      if(sp.type==='status'&&G.turn%sp.every===0){addPlayerStatus(sp.status);log(e.name+' ['+STATUS_DEF[sp.status].name+'] '+'부여!','lr');}
+    });
+    let eStr=e.str;
+    if(wcHit)eStr=Math.floor(eStr*0.7);
+    if(e.shieldBashed){eStr=Math.floor(eStr*0.1);e.shieldBashed=false;log(e.name+' 밀쳐져 공격력 90% 감소!','lw');}
+    const doHit=(tag)=>{
+      // dodge rune: 20% avoid
+      if(hasRune('dodge')&&rnd(1,100)<=20){log('👻 회피! '+e.name+'의 공격을 피했다.','lc');return true;}
+      let rawD=e.magic?Math.max(1,eStr-Math.floor(G.p.mdef*0.5)+rnd(0,5)):dmg(eStr,G.p.def);
+      if(G.isBoss)rawD=Math.floor(rawD*2);
+      const tauntBuf=G.buffs.find(b=>b.id==='taunt');
+      if(is)rawD=Math.max(1,Math.floor(rawD*0.35));
+      else if(tauntBuf)rawD=Math.max(1,Math.floor(rawD*0.60));
+      else if(bgBuf){
+        rawD=Math.max(1,Math.floor(rawD*0.50));
+        const _bgIdx=G.buffs.findIndex(b=>b.id==='bodyguard');
+        if(_bgIdx>=0)G.buffs.splice(_bgIdx,1); // 1회만 소모 (최대 2중첩)
+      }
+      // 각인 각성: 누적 단일 롤 (20%→1차, 21~40%→2차, 41~60%→3차)
+      if(e.magic){
+        const _mawkLv=getAwkLevel('mdef');
+        if(_mawkLv>0){
+          const _r=rnd(1,100);let _pct=0;
+          if(_r<=20)_pct=50;
+          else if(_r<=40&&_mawkLv>=2)_pct=75;
+          else if(_r<=60&&_mawkLv>=3)_pct=100;
+          if(_pct>0){rawD=Math.max(0,Math.floor(rawD*(1-_pct/100)));log('🔮 [마법 보호막 각성'+_mawkLv+'차] 마법 피해 '+_pct+'% 차단!','lc');}
+        }
+      }else{
+        const _awkLv=getAwkLevel('def');
+        if(_awkLv>0){
+          const _r=rnd(1,100);let _pct=0;
+          if(_r<=20)_pct=50;
+          else if(_r<=40&&_awkLv>=2)_pct=75;
+          else if(_r<=60&&_awkLv>=3)_pct=100;
+          if(_pct>0){rawD=Math.max(0,Math.floor(rawD*(1-_pct/100)));log('🛡 [철의 각인 각성'+_awkLv+'차] 피해 '+_pct+'% 차단!','lc');}
+        }
+      }
+      G.p.rage=Math.min(100,G.p.rage+Math.floor(rawD*(hasEq('helm_3')?0.45:0.30)));
+      // 레이븐 마법장벽 흡수
+      const _rsIdx=G.buffs.findIndex(b=>b.id==='raven_shield');
+      if(_rsIdx>=0&&rawD>0){
+        const _rs=G.buffs[_rsIdx];
+        if(rawD<=_rs.amount){const _abs=rawD;_rs.amount-=_abs;log('🔮 [마법장벽] '+_abs+' 흡수! (남은: '+_rs.amount+')','lc');rawD=0;}
+        else{const _abs=_rs.amount;rawD-=_abs;log('🔮 [마법장벽] '+_abs+' 흡수! 남은 피해: '+rawD,'lc');G.buffs.splice(_rsIdx,1);}
+      }
+      G.p.hp-=rawD;
+      if(drainPct>0){const heal=Math.floor(rawD*drainPct);e.hp=Math.min(e.maxHp,e.hp+heal);log(e.name+' '+'흥협! HP +'+heal,'lr');}
+      const atkTag=e.magic?'[마법] ':'';
+      const defTag=is?' (철벽 방어!)':'';
+      log(atkTag+e.name+(tag||'')+' '+'공격! '+rawD+' '+'피해'+(G.isBoss?' (보스!)':'')+defTag+(wcHit?' (전투 함성!)':''),'lr');
+      if(G.p.hp<=0){
+        if(hasRune('sentinel')&&!G.sentinelUsed){G.p.hp=1;G.sentinelUsed=true;log('⚙ 강철의 정수: 치사타격 생존!','lo');return true;}
+        gameOver();return false;
+      }
+      return true;
+    };
+    if(doDevour){
+      log(e.name+' ['+'포식] '+'연속 공격!','lr');
+      if(!doHit(' 1타'))return;
+      if(!doHit(' 2타'))return;
+    }else if(doDouble){
+      log(e.name+' ['+'연타] 2'+'연속 공격!','lr');
+      if(!doHit(' 1타'))return;
+      if(!doHit(' 2타'))return;
+    }else{
+      if(!doHit(''))return;
+    }
+  }
+  if(processPlayerStatus())return;
+  log('━━━━ ⚔ '+(G.turn+1)+'턴 ⚔ ━━━━','lt');
+  ui();renderBattle();
+}
+function skShieldBash(){
+  if(G.p.rage<20||G.phase!=='battle')return;
+  G.p.rage-=20;
+  const e=te();if(!e)return;
+  let d=Math.floor(dmg(G.p.str,e.def)*0.5);d=applyStrAwk(d);
+  e.hp-=d;
+  e.shieldBashed=true;
+  log('[방패밀치기] '+d+' 피해! 다음 공격력 90% 감소!','lp');
+  checkDeaths();if(allDead()){win();return;}
+  pickTarget();partyAtk();checkDeaths();if(allDead()){win();return;}
+  eTurn();
+  if(G.phase!=='battle')return; // level-up screen — don't overwrite
+  ui();renderBattle();
+}
+function skPS(){
+  if(G.p.rage<30||G.phase!=='battle')return;
+  G.p.rage-=30;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  let atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  if(hasEq('axe_4')&&G.p.hp>=G.p.mhp*0.9)atkStr=Math.floor(atkStr*1.5);
+  if(hasEq('ring_4'))atkStr=Math.floor(atkStr*1.15);
+  const t=te();if(!t)return;
+  let d=dmg(atkStr*2,t.def);d=applyStrAwk(d);
+  t.hp-=d;log('[휘두르기] '+t.name+'에게 '+d+' 피해!','lsk');
+  const wasAlive=t.hp>0;
+  checkDeaths();
+  if(!wasAlive){G.p.rage=Math.min(100,G.p.rage+25);log('[강타] 처치! 분노 +25 회수','lw');}
+  partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+function skSR(){
+  if(G.p.rage<70||G.phase!=='battle')return;
+  G.p.rage-=70;
+  G.buffs=G.buffs.filter(b=>b.id!=='sr');
+  G.buffs.push({id:'sr',name:'야만의 분노',turns:2});
+  const heal=Math.floor(G.p.mhp*0.10);
+  G.p.hp=Math.min(G.p.mhp,G.p.hp+heal);
+  log('[야생 폭발] 2턴간 STR×2! HP +'+heal+' 회복!','lsk');ui();renderBattle();
+}
+function skTaunt(){
+  if(G.p.rage<25||G.phase!=='battle')return;
+  G.p.rage-=25;
+  G.buffs=G.buffs.filter(b=>b.id!=='taunt');
+  G.buffs.push({id:'taunt',name:'결투 도발',turns:2});
+  log('[결투 도발] 2턴간 적 공격 집중, 피해 40% 감소!','lsk');ui();renderBattle();
+}
+function skIS(){
+  if(G.p.rage<40||G.phase!=='battle')return;
+  G.p.rage-=40;
+  G.buffs=G.buffs.filter(b=>b.id!=='is');
+  G.buffs.push({id:'is',name:'철벽 방어',turns:1});
+  log('[철벽 방어] 1턴간 피해 65% 감소!','lsk');ui();renderBattle();
+}
+function skWC(){
+  if(G.p.rage<20||G.phase!=='battle')return;
+  G.p.rage-=20;
+  G.edebuffs=G.edebuffs.filter(b=>b.id!=='wc');
+  G.edebuffs.push({id:'wc',name:'전투 함성',turns:2});
+  log('[폭풍의 눈] 전체 적 공격력 -30%, 2턴!','lsk');ui();renderBattle();
+}
+function useItem(k){
+  const it=G.inv[k];if(!it||!it.c)return;it.c--;
+  if(k==='hp_s'){const h=200;G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('['+it.name+'] HP +'+h,'ls');}
+  else if(k==='hp_m'){const h=1000;G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('['+it.name+'] HP +'+h,'ls');}
+  else if(k==='hp_l'){const h=3000;G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('['+it.name+'] HP +'+h,'ls');}
+  else if(k==='ess_c'){const r=25;G.p.rage=Math.min(100,G.p.rage+r);log('['+it.name+'] 분노 +'+r,'ls');}
+  else if(k==='tent'){if(G.phase==='battle'){log('전투 중에는 야영 불가!','lw');it.c++;return;}const h=Math.floor(G.p.mhp*0.3);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('[텐트] 야영! HP +'+h,'ls');}
+  else if(k==='campfire'){if(G.phase==='battle'){log('전투 중에는 야영 불가!','lw');it.c++;return;}G.p.hp=G.p.mhp;G.p.rage=Math.min(100,G.p.rage+30);log('[모닥불] 야영! HP 전량 회복 + 분노 +30','ls');}
+  ui();if(G.phase==='battle')renderBattle();
+}
+
+function win(){
+  G.edebuffs=[];
+  const _wasBoss=G.isBoss;const _bossFloor=G.floor;
+  const _inCrack=G.inCrack;const _crackType=G.crackType;
+  G.enemies.forEach(e=>{if(!e._rewarded)killEnemy(e);});
+  G.phase='explore';G.enemies=[];G.target=0;
+  // ── 균열 보스 처치 ──
+  if(_inCrack&&_wasBoss){
+    G._crackVictory=_crackType;// spendSP 레벨업 후 복귀용
+    G.inCrack=false;G.crackType=null;G.crackStep=0;G.isBoss=false;
+    const cd=CRACK_DATA[_crackType];
+    if(cd.essDrops){cd.essDrops.forEach(d=>{const key='crackE_'+_crackType+d.id;if(rnd(1,100)<=d.chance&&!G.absorbed[key]){G.absorbed[key]=true;G.pendingEssences.push(d.id);}});}
+    if(cd.itemDrop&&rnd(1,100)<=cd.itemDrop.chance){G.pendingBossItems=G.pendingBossItems||[];G.pendingBossItems.push(cd.itemDrop.id);}
+    if(G.autoBattle){G.autoBattle=false;log('⚡ 자동전투 해제 (균열 보스 처치)','ls');}
+    const _acb=()=>{
+      if(G.sp>0){showLevelUp();return;}
+      if(checkLevelUp())return;
+      G._crackVictory=null;showCrackVictory(_crackType);
+    };
+    const _rcb=()=>{if(G.pendingBossItems&&G.pendingBossItems.length){offerBossItem(_acb);}else{_acb();}};
+    if(G.autoBattle){_acb();return;}
+    if(G.pendingEssences.length>0){offerNextEssence(_rcb);return;}
+    _rcb();return;
+  }
+  // ── 균열 일반 방 전투 승리 ──
+  if(_inCrack){
+    const _awr=()=>{
+      if(G.sp>0){showLevelUp();return;}
+      if(checkLevelUp())return;
+      if(G.autoBattle){setTimeout(crackNextRoom,300);return;}
+      ui();
+      sc('<div>'
+        +'<div class="ei">⚔</div><div class="et">전투 승리!</div>'
+        +'<div class="st">균열의 적을 물리쳤다!<br>'
+        +'<span style="color:var(--muted);font-size:.78em">─ 아무곳이나 탭하여 계속 ─</span></div>'
+        +'</div>');
+      const _b=[];
+      if(G.inv.tent&&G.inv.tent.c>0)_b.push({text:'⛺ 텐트 (HP 30%)',cls:'bs',fn:()=>{G.inv.tent.c--;const h=Math.floor(G.p.mhp*0.30);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('⛺ HP +'+h,'lh');ui();_awr();}});
+      sa(_b);
+      E('sb').style.cursor='pointer';
+      E('sb').onclick=(ev)=>{if(ev.target.tagName!=='BUTTON'){E('sb').onclick=null;E('sb').style.cursor='';crackNextRoom();}};
+    };
+    if(G.autoBattle){_awr();return;}
+    if(G.pendingEssences.length>0){offerNextEssence(_awr);return;}
+    _awr();return;
+  }
+  // Boss drops
+  if(_wasBoss){
+    G.maxFloor=Math.max(G.maxFloor||1,_bossFloor); // 최고 클리어 층 기록
+    const bd=BOSS_DROPS[getBossDropKey(_bossFloor)];
+    if(bd){
+      if(bd.ess){bd.ess.forEach(d=>{if(rnd(1,100)<=d.chance){G.pendingEssences.push(d.id);}});}
+      if(bd.item&&rnd(1,100)<=bd.item.chance){G.pendingBossItems=G.pendingBossItems||[];G.pendingBossItems.push(bd.item.id);}
+    }
+    if(G.autoBattle){G.autoBattle=false;log('⚡ 자동전투 해제 (보스 처치)','ls');}
+  }
+  const afterWin=()=>{
+    // If level-up happened during last kill, SP is pending but checkLevelUp
+    // already consumed the exp. Show the SP screen now before victory.
+    if(G.sp>0){G._battleBeforeLevelup=false;showLevelUp();return;}
+    if(checkLevelUp())return;
+    if(_wasBoss){showBossClearChoice(_bossFloor);return;}
+    if(G.autoBattle){setTimeout(nextEv,300);return;}
+    ui();
+    sc('<div>'
+      +'<div class="ei">⚔</div><div class="et">전투 승리!</div>'
+      +'<div class="st">모든 적을 처치했다!<br>'
+      +'<span style="color:var(--muted);font-size:.78em">─ 아무곳이나 탭하여 계속 ─</span></div>'
+      +'</div>');
+    const _aw_btns=[];
+    if(G.inv.tent&&G.inv.tent.c>0)_aw_btns.push({text:'⛺ 텐트 (HP 30%)',cls:'bs',fn:()=>{G.inv.tent.c--;const h=Math.floor(G.p.mhp*0.30);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('⛺ 텐트: HP +'+h,'lh');ui();afterWin();}});
+    if(G.inv.campfire&&G.inv.campfire.c>0)_aw_btns.push({text:'🔥 모닥불 (HP 전량)',cls:'bs',fn:()=>{G.inv.campfire.c--;const h=G.p.mhp-G.p.hp;G.p.hp=G.p.mhp;G.p.rage=Math.min(100,G.p.rage+30);log('🔥 모닥불: HP +'+h+' 분노+30','lh');ui();afterWin();}});
+    sa(_aw_btns);
+    E('sb').style.cursor='pointer';
+    E('sb').onclick=(ev)=>{if(ev.target.tagName!=='BUTTON'){E('sb').onclick=null;E('sb').style.cursor='';nextEv();}};
+  };
+  const runAfterWin=()=>{
+    if(G.pendingBossItems&&G.pendingBossItems.length){offerBossItem(runAfterWin);return;}
+    afterWin();
+  };
+  // 자동전투 중 비보스: 정수/아이템 처리 건너뛰고 즉시 진행 (보스 처치 후 일괄 처리)
+  if(G.autoBattle){afterWin();return;}
+  if(G.pendingEssences.length>0){offerNextEssence(runAfterWin);return;}
+  runAfterWin();
+}
+
+function offerBossItem(cb){
+  if(!G.pendingBossItems||!G.pendingBossItems.length){if(cb)cb();return;}
+  const itemId=G.pendingBossItems.shift();
+  const item=EQ_ITEMS[itemId];if(!item){offerBossItem(cb);return;}
+  const slot=EQ_SLOTS[item.slot];
+  const cur=G.eq[item.slot]?EQ_ITEMS[G.eq[item.slot]]:null;
+  let html='<div class="ei">🎁</div><div class="et">보스 전리품!</div>';
+  html+='<div class="st"><b style="color:var(--gold)">'+slot.emoji+' '+item.name+'</b><br>';
+  html+='<span style="color:var(--muted);font-size:.85em">'+item.desc+'</span><br>';
+  if(cur)html+='<br><span style="color:var(--muted);font-size:.82em">현재 장착: <b>'+cur.name+'</b> — '+cur.desc+'</span>';
+  html+='</div>';
+  sc(html);
+  const btns=[];
+  btns.push({text:'⚔ 비요른에게 장착'+(cur?' (교체: '+cur.name+')':''),cls:'bp',
+    fn:()=>{equipItem(itemId);log('🎁 ['+item.name+'] 장착!','ls');offerBossItem(cb);}});
+  G.party.forEach(m=>{
+    if(!m.eq)m.eq={};
+    const gain=compPowerGain(item);
+    const oldId=m.eq[item.slot];
+    const oldItem=oldId?EQ_ITEMS[oldId]:null;
+    const oldGain=oldItem?compPowerGain(oldItem):0;
+    const diff=gain-oldGain;
+    const label=oldItem?'교체: '+oldItem.name+' → '+item.name+' (STR '+(diff>=0?'+':'')+diff+')':item.name+' (STR +'+gain+')';
+    btns.push({text:'🤝 '+m.emoji+m.name+' — '+label,cls:'bs',
+      fn:()=>{
+        if(!m.eq)m.eq={};
+        if(oldItem){m.str=Math.max(0,(m.str||0)-oldGain);}
+        m.eq[item.slot]=itemId;m.str=(m.str||0)+gain;
+        m.donations=m.donations||[];m.donations.push(item.name);
+        log('🎁 '+item.name+' → '+m.name+(oldItem?' ('+oldItem.name+' 교체)':'')+' STR '+(diff>=0?'+':'')+diff,'ls');
+        offerBossItem(cb);}});
+  });
+  btns.push({text:'🗑 버리기',cls:'bd',fn:()=>{log('🗑 ['+item.name+'] 버림','lw');offerBossItem(cb);}});
+  sa(btns);
+}
+function showBoss(){
+  const b=getFloorBoss();
+  sc('<div class="ei">'+b.emoji+'</div><div class="et">차원문의 수호자!</div><div class="st">'+ '<span class="hl">'+b.name+'</span><br>등급: '+'★'.repeat(b.grade)+'☆'.repeat(5-b.grade)+'<br><br>차원문을 막고 있다. 처치하면 다음 층으로 이동한다.</div>');
+  sa([
+    {text:'⚔ 보스 전투 시작!',cls:'bp',fn:()=>startCombat(true)},
+  ]);
+}
+// ── 2층 지역 헬퍼 ──
+const REGION_NAMES={goblin:'고블린 숲',beast:'짐승의 소굴',desert:'바위 사막',undead:'망자의 땅'};
+const REGION_EMOJI={goblin:'🌲',beast:'🐗',desert:'🏜️',undead:'💀'};
+const REGION_DESC={
+  goblin:'고블린 서식지. 포탈 비석 8개 중 1개만 활성화된 미로 같은 숲.',
+  beast:'야수형 몬스터의 소굴. 협곡과 구덩이 함정이 곳곳에 도사린다.',
+  desert:'칠흑 같은 어둠의 바위 사막. 횃불 없이는 한 치 앞도 안 보인다.',
+  undead:'언데드가 출몰하는 땅. 북쪽으로만 가면 3층으로 가는 길이 열린다.',
+};
+const REGION_BGS={
+  goblin:'linear-gradient(160deg,#0a1500 0%,#1e3300 50%,#0a1500 100%)',
+  beast: 'linear-gradient(160deg,#1a0000 0%,#2d1000 50%,#1a0000 100%)',
+  desert:'linear-gradient(160deg,#2d1a00 0%,#1a0e00 50%,#2d1a00 100%)',
+  undead:'linear-gradient(160deg,#0a0015 0%,#180028 50%,#0a0015 100%)',
+};
+function getEnemyPool(){
+  if(G.floor===2&&G.region)return MN['2_'+G.region];
+  return MN[G.floor]||[];
+}
+function getFloorBoss(){
+  if(G.floor===2&&G.region)return BS['2_'+G.region];
+  return BS[G.floor];
+}
+function getBossDropKey(f){
+  if(f===2&&G.region)return '2_'+G.region;
+  return f;
+}
+function showRegionSelect(){
+  sc('<div class="ei">🌲</div><div class="et">2층: 4개 필드</div>'
+    +'<div class="st">어느 지역으로 향할 것인가?<br><br>'
+    +'<span style="color:var(--muted);font-size:.85em">각 지역마다 고유한 몬스터와 보스가 존재한다.<br>모든 길은 결국 3층 — 순례자의 길로 이어진다.</span></div>');
+  sa([
+    {text:'🌲 고블린 숲 — 고블린 서식지 미로',cls:'bs',fn:()=>{G.region='goblin';goFloor(2);}},
+    {text:'🐗 짐승의 소굴 — 야수형 몬스터 소굴',cls:'bs',fn:()=>{G.region='beast';goFloor(2);}},
+    {text:'🏜️ 바위 사막 — 오크와 어둠의 지형',cls:'bs',fn:()=>{G.region='desert';goFloor(2);}},
+    {text:'💀 망자의 땅 — 언데드 출몰 지역',cls:'bs',fn:()=>{G.region='undead';goFloor(2);}},
+  ]);
+}
+function goFloor(f){
+  if(f>8){gameClear();return;}
+  if(f===2&&!G.region){showRegionSelect();return;}
+  if(f>=3)G.region=null;
+  G.floor=f;G.step=0;G.total=FE[f];G.buffs=[];G.edebuffs=[];G.enemies=[];G.target=0;G.npcDone=false;G.isBoss=false;G.shopEq=null;G.pendingBossItems=[];G.tavernPool=null;
+  const _rname=G.region?(' ['+REGION_NAMES[G.region]+']'):'';
+  log('━━━ '+f+'층으로 이동'+_rname+' ━━━','ls');
+  saveGame();
+  ui();floorIntro();
+}
+function returnToFloor1(){
+  const hired=G.party.filter(m=>m.hired);
+  if(hired.length){offerRetainComp(hired,[],_doReturn);}
+  else{_doReturn([]);}
+}
+function offerRetainComp(toCheck,toKeep,cb){
+  if(!toCheck.length){cb(toKeep);return;}
+  const m=toCheck[0];const rest=toCheck.slice(1);
+  const cost=Math.max(1,Math.floor(m.hireCost*0.6));
+  sc('<div class="ei">'+m.emoji+'</div><div class="et">동료 재계약</div>'+
+     '<div class="st">'+m.emoji+' <b>'+m.name+'</b> ['+m.cls+']<br>'+
+     'STR: '+m.str+' | 스킬 발동: '+m.skillChance+'%<br><br>'+
+     '재계약비: <b style="color:var(--gold)">'+cost+'마석</b> (원래 '+m.hireCost+'마석 × 60%)<br>'+
+     '<span style="color:var(--muted);font-size:.85em">현재 마석: '+G.ess+'</span></div>');
+  const btns=[];
+  if(G.ess>=cost){
+    btns.push({text:'✅ 재계약 ('+cost+'마석)',cls:'bp',
+      fn:()=>{G.ess-=cost;log(m.emoji+' '+m.name+' 재계약!','ls');offerRetainComp(rest,[...toKeep,m],cb);}});
+  } else {
+    btns.push({text:'❌ 재계약 불가 (마석 부족)',cls:'bd',fn:()=>{}});
+  }
+  btns.push({text:'👋 해산',cls:'bd',
+    fn:()=>{log(m.emoji+' '+m.name+' 해산.','lw');offerRetainComp(rest,toKeep,cb);}});
+  sa(btns);
+}
+function _doReturn(keptHired){
+  const nonHired=G.party.filter(m=>!m.hired);
+  const kept={p:JSON.parse(JSON.stringify(G.p)),eq:JSON.parse(JSON.stringify(G.eq)),
+    ess:G.ess,party:[...nonHired,...keptHired],runes:G.runes,absorbed:G.absorbed,
+    inv:JSON.parse(JSON.stringify(G.inv)),engravings:JSON.parse(JSON.stringify(G.engravings)),
+    level:G.level,sp:G.sp,skills:[...G.skills],pendingEssences:G.pendingEssences.slice(),
+    firstKills:G.firstKills||{},exp:G.exp||0,nextLevelExp:G.nextLevelExp||10,
+    compEss:G.compEss||{},maxFloor:G.maxFloor||1,erwen:G.erwen||false,raven:G.raven||false};
+  G=ig();
+  G.p=kept.p;G.eq=kept.eq;G.ess=kept.ess;G.party=kept.party;G.runes=kept.runes;
+  G.absorbed=kept.absorbed;G.inv=kept.inv;G.engravings=kept.engravings;
+  G.level=kept.level;G.sp=kept.sp;G.skills=kept.skills;G.pendingEssences=kept.pendingEssences;
+  G.firstKills=kept.firstKills;G.exp=kept.exp;G.nextLevelExp=kept.nextLevelExp;
+  G.runeSlots=Math.min(kept.level,8);G.compEss=kept.compEss;G.maxFloor=kept.maxFloor;G.erwen=kept.erwen;G.raven=kept.raven;
+  // 이름/아이콘 마이그레이션 (구버전 저장 데이터 호환)
+  G.party.forEach(m=>{
+    if(m.id==='raven'){m.name='레이븐';m.emoji='🔮';}
+    if(m.id==='erwen'){m.name='에르웬';m.emoji='🌿';}
+  });
+  G.shopEq=null;G.tavernPool=null;
+  log('🌀 미궁에서 귀환. 라프도니아로 귀환!','ls');
+  ui();showVillage();
+}
+function showErwenJoin(){
+  G.erwen=true;
+  sc('<div class="ei">🏹</div><div class="et">에르웬</div>'
+    +'<div class="st">라프도니아 광장에 돌아오자, 한 엘프 궁수가 조용히 다가온다.<br><br>'
+    +'&ldquo;비요른 씨, 미궁에서 싸우는 모습을 지켜봤어요.<br>제가 곁에 있어야 해요. 반드시.&rdquo;<br><br>'
+    +'<span style="color:var(--muted);font-size:.85em">🏹 에르웬 [정령 궁수] STR: 30<br>'
+    +'10%: 정령소환 전체 (마법형 ×2.5) | 50%: 조준 ×2 (마법형 ×3) | 40%: 평타 (마법형 ×1.5)</span></div>');
+  sa([
+    {text:'🏹 에르웬과 함께하기',cls:'bp',fn:()=>{
+      if(!G.party.some(p=>p.id==='erwen')){
+        const ew={id:'erwen',name:'에르웬',emoji:'🌿',cls:'정령 궁수',str:30,hired:false,eq:{}};
+        showDismissForJoin(ew,'🏹 에르웬가 파티에 합류!',()=>{ui();showVillage();});
+      } else { ui();showVillage(); }
+    }},
+    {text:'다음에',cls:'bd',fn:()=>{
+      // 거절해도 G.erwen=true이므로 다시는 안 나옴 — 술집에서 만날 수 있음
+      showVillage();
+    }}
+  ]);
+}
+function showRavenJoinCastle(){
+  G.raven=true;
+  sc('<div class="ei">🔥</div><div class="et">레이븐</div>'
+    +'<div class="st">핏빛 성채의 입구. 어둠 속에서 한 여성 마법사가 나타난다.<br><br>'
+    +'&ldquo;잠깐, 바바리안. 저 안에 들어가려는 거야?&rdquo;<br><br>'
+    +'붉은 머리카락이 성채에서 새어 나오는 핏빛 빛에 물든다.<br><br>'
+    +'&ldquo;나 레이븐. 마법사야. 저 성채에 관심이 좀 있어.'
+    +' 혼자선 무리인 것 같으니까 — 같이 들어가죠.&rdquo;<br><br>'
+    +'<span style="color:var(--muted);font-size:.85em">🔥 레이븐 [암흑 마법사] STR: 40<br>'
+    +'보스 데미지 ×2 · 40% 화염구 / 20% 화염폭풍 / 10% 냉기폭풍(스턴) / 10% 마법장벽 / 20% 마나충전</span></div>');
+  sa([
+    {text:'🔥 레이븐과 함께 핏빛 성채 진입!',cls:'bp',fn:()=>{
+      if(!G.party.some(p=>p.id==='raven')){
+        const rv={id:'raven',name:'레이븐',emoji:'🔮',cls:'암흑 마법사',str:40,hired:false,eq:{}};
+        showDismissForJoin(rv,'🔥 레이븐이 파티에 합류! 핏빛 성채로 진입',()=>enterCrack('castle'));
+      } else { enterCrack('castle'); }
+    }},
+    {text:'혼자 들어간다',cls:'bd',fn:()=>{
+      log('레이븐이 어깨를 으쓱하고 뒤를 따라온다.','lw');
+      enterCrack('castle');
+    }},
+  ]);
+}
+function showDismissForJoin(newMember,joinLog,callback){
+  if(G.party.length<6){
+    G.party.push(newMember);
+    log(joinLog,'ls');
+    callback();
+    return;
+  }
+  sc('<div class="ei">👥</div><div class="et">파티 가득참!</div>'
+    +'<div class="st"><b>'+newMember.emoji+' '+newMember.name+'</b>이(가) 합류하려 합니다.<br>'
+    +'파티가 꽉 찼습니다. 기존 동료 중 한 명을 해산해야 합니다.</div>');
+  const btns=G.party.map(m=>({
+    text:m.emoji+' '+m.name+' ['+m.cls+'] STR '+(m.str||0)+' — 해산',
+    cls:'bd',
+    fn:()=>{
+      G.party=G.party.filter(p=>p.id!==m.id);
+      log(m.emoji+' '+m.name+' 해산.','lw');
+      G.party.push(newMember);
+      log(joinLog,'ls');
+      callback();
+    }
+  }));
+  btns.push({text:'❌ '+newMember.name+' 합류 거절',cls:'bd',fn:callback});
+  sa(btns);
+}
+function showErwenJoin1F(){
+  G.erwen=true;
+  sc('<div class="ei">🏹</div><div class="et">에르웬</div>'
+    +'<div class="st">수정동굴 깊은 곳. 구석에 쪼그려 앉은 엘프 궁수가 눈에 들어왔다. 피폐한 기색이 역력하다.<br><br>'
+    +'비요른을 발견하자 그녀가 화들짝 놀라며 두 손을 들었다.<br><br>'
+    +'&ldquo;아아— 저를... 저를 해치지 말아주세요, 아저씨.&rdquo;<br><br>'
+    +'눈에 눈물이 맺혀있다. 한참을 떨다가 이내 조심스럽게 입을 열었다.<br><br>'
+    +'&ldquo;...혼자는 너무 무서워요. 곁에 있어주시면 안 될까요?&rdquo;<br>'
+    +'<i style="color:var(--muted);font-size:.85em">(비요른은 잠깐 생각했다. 나도 밤친구가 필요하긴 하지..)</i><br><br>'
+    +'<span style="color:var(--muted);font-size:.85em">🏹 에르웬 [정령 궁수] STR: 30<br>'
+    +'10%: 정령소환 전체 (마법형 ×2.5) | 50%: 조준 ×2 (마법형 ×3) | 40%: 평타 (마법형 ×1.5)</span></div>');
+  sa([
+    {text:'🏹 "그럼 일단 같이 다니자."',cls:'bp',fn:()=>{
+      if(!G.party.some(p=>p.id==='erwen')){
+        const ew={id:'erwen',name:'에르웬',emoji:'🌿',cls:'정령 궁수',str:30,hired:false,eq:{}};
+        showDismissForJoin(ew,'🏹 에르웬가 파티에 합류했다.',nextEv);
+      } else { nextEv(); }
+    }},
+    {text:'"...됐어. 따라와."',cls:'bd',fn:()=>{
+      if(!G.party.some(p=>p.id==='erwen')){
+        const ew={id:'erwen',name:'에르웬',emoji:'🌿',cls:'정령 궁수',str:30,hired:false,eq:{}};
+        showDismissForJoin(ew,'에르웬이 안도한 표정으로 조용히 뒤를 따른다.',nextEv);
+      } else { nextEv(); }
+    }},
+  ]);
+}
+function showRavenJoin(){
+  G.raven=true;
+  sc('<div class="ei">🔥</div><div class="et">레이븐</div>'
+    +'<div class="st">라프도니아 술집. 붉은 머리 마법사가 구석에 앉아 지도를 들여다보고 있다.<br><br>'
+    +'&ldquo;비요른... 2층까지 혼자 깼다고? 흥미롭네. 나를 써봐. 후회는 없을 거야.&rdquo;<br><br>'
+    +'<span style="color:var(--muted);font-size:.85em">🔥 레이븐 [암흑 마법사] STR: 40<br>'
+    +'보스 데미지 ×2 · 40% 화염구 / 20% 화염폭풍 / 10% 냉기폭풍(스턴) / 10% 마법장벽 / 20% 마나충전</span></div>');
+  sa([
+    {text:'🔥 레이븐과 함께하기',cls:'bp',fn:()=>{
+      if(!G.party.some(p=>p.id==='raven')){
+        const rv={id:'raven',name:'레이븐',emoji:'🔮',cls:'암흑 마법사',str:40,hired:false,eq:{}};
+        showDismissForJoin(rv,'🔥 레이븐이 파티에 합류!',()=>{ui();showVillage();});
+      } else { ui();showVillage(); }
+    }},
+    {text:'다음에',cls:'bd',fn:()=>{
+      showVillage();
+    }}
+  ]);
+}
+function showBossClearChoice(clearedFloor){
+  showCamp(clearedFloor);
+}
+function showCamp(clearedFloor){
+  const nextF=clearedFloor+1;
+  const FLOOR_NAMES=['','수정동굴','짐승소굴','순례자의 길','천공의 탑','대마경','대해','암흑대륙','여명의 땅'];
+  const fname=FLOOR_NAMES[clearedFloor]||clearedFloor+'층';
+  const nname=nextF===2?'2층: 지역 선택':(FLOOR_NAMES[nextF]||nextF+'층');
+  const hasTent=G.inv.tent&&G.inv.tent.c>0;
+  const hasFire=G.inv.campfire&&G.inv.campfire.c>0;
+  sc(
+    '<div class="ei">🏕</div>'+
+    '<div class="et">야영지</div>'+
+    '<div class="st">'+fname+' 보스를 처치했다. 차원문이 열렸다.<br>'
+    +'HP: <span style="color:var(--red)">'+G.p.hp+'/'+G.p.mhp+'</span>'
+    +(hasTent||hasFire?'<br><span style="color:var(--muted);font-size:.82em">⛺ 텐트 '+G.inv.tent.c+'개 | 🔥 모닥불 '+G.inv.campfire.c+'개</span>':'')
+    +'<br><br><span style="color:var(--muted);font-size:.82em">※ 상인은 마을에서만 만날 수 있습니다.</span></div>'
+  );
+  const btns=[];
+  if(hasTent)btns.push({text:'⛺ 텐트 사용 — HP 30% 회복',cls:'bs',fn:()=>{
+    G.inv.tent.c--;const h=Math.floor(G.p.mhp*0.30);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);
+    log('⛺ 텐트 설치. HP +'+h+' 회복','lh');ui();showCamp(clearedFloor);}});
+  if(hasFire)btns.push({text:'🔥 모닥불 피우기 — HP 전량 회복 + 분노+30',cls:'bs',fn:()=>{
+    G.inv.campfire.c--;const h=G.p.mhp-G.p.hp;G.p.hp=G.p.mhp;
+    G.p.rage=Math.min(100,G.p.rage+30);
+    log('🔥 모닥불 앞에서 휴식. HP +'+h+' 전량 회복, 분노+30','lh');ui();showCamp(clearedFloor);}});
+  btns.push({text:'🌀 '+nname+' 진입 ▶',cls:'bp',fn:()=>goFloor(nextF)});
+  btns.push({text:'🔙 귀환 — 1층부터 재시작 (마을로)',cls:'bd',fn:()=>{
+    sc('<div class="ei">🔙</div><div class="et">귀환 확인</div>'+
+       '<div class="st">장비·마석·동료·정수를 유지하고<br>라프도니아로 귀환 후 1층부터 탐험합니다.<br><br>'+
+       '<span style="color:var(--muted);font-size:.82em">미궁 진행도는 초기화됩니다.</span></div>');
+    sa([
+      {text:'✅ 귀환 확인',cls:'bp',fn:returnToFloor1},
+      {text:'← 취소',cls:'bd',fn:()=>showCamp(clearedFloor)},
+    ]);
+  }});
+  sa(btns);
+}
+function showFloorComp(){
+  const avail=NPC.filter(n=>!G.party.some(m=>m.id===n.id));
+  if(!avail.length){floorIntro();return;}
+  let html='<div class="ei">👥</div><div class="et">동료 영입</div><div class="st">파티에 합류시킬 동료를 선택하세요.<br><span style="color:var(--muted);font-size:.85em">이번 층에서 한 명만 영입 가능</span></div>';
+  sc(html);
+  const btns=avail.map(npc=>({text:npc.emoji+' '+npc.name+' ('+npc.cls+') — '+npc.desc,cls:'bs',fn:()=>accFloorNpc(npc)}));
+  btns.push({text:'거절 (동료 없이 계속)',cls:'bd',fn:floorIntro});
+  sa(btns);
+}
+function accFloorNpc(npc){
+  if(G.npcDone)return;
+  G.npcDone=true;
+  npc.power=0;npc.donations=[];
+  G.party.push(npc);
+  log(npc.name+'이(가) 파티에 합류!','ls');
+  ui();floorIntro();
+}
+function showTavern(){
+  if(!G.tavernPool){
+    const NAMES={
+      '초보 모험가':['켈빈','레온','이온','마르','티오','에드','세바스','로이','울프','클라우스'],
+      '초보 검사':  ['레이','카이','알렉','듀크','지크','발터','다리우스','트리스탄','막시','로한'],
+      '초보 사냥꾼':['아론','실바','로빈','핀','니코','게리','타일러','아이든','루카','헌터'],
+    };
+    const EMOJIS={'초보 모험가':'🛡','초보 검사':'⚔','초보 사냥꾼':'🏹'};
+    const SKILLS={'초보 모험가':'대신맞기','초보 검사':'마구휘두르기','초보 사냥꾼':'조준'};
+    const types=['초보 모험가','초보 검사','초보 사냥꾼'];
+    // 클래스별 STR·스킬확률 범위
+    const STR_RANGE={'초보 모험가':[10,20],'초보 검사':[10,30],'초보 사냥꾼':[10,25]};
+    const SC_RANGE= {'초보 모험가':[30,50],'초보 검사':[10,30],'초보 사냥꾼':[10,35]};
+    // 이름 중복 방지: 클래스별 셔플 후 순서대로 사용
+    const _sh=(a)=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=rnd(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;};
+    const shuffled={}; const nameIdx={};
+    types.forEach(t=>{shuffled[t]=_sh(NAMES[t]);nameIdx[t]=0;});
+    const pool=[];
+    for(let i=0;i<10;i++){
+      const cls=types[rnd(0,2)];
+      const nm=shuffled[cls][nameIdx[cls]%shuffled[cls].length];nameIdx[cls]++;
+      const str=rnd(STR_RANGE[cls][0],STR_RANGE[cls][1]);
+      const sc2=rnd(SC_RANGE[cls][0],SC_RANGE[cls][1]);
+      const cost=Math.min(80,Math.max(10,Math.floor(10+(str-10)*1.5+(sc2-10)*0.5)));
+      const skillDesc=cls==='초보 모험가'?'적 다음 공격 50% 감소':cls==='초보 검사'?'STR×0.8 광역 피해':'단일 1.5배 피해';
+      const desc=SKILLS[cls]+'('+sc2+'%) — '+skillDesc;
+      pool.push({id:'h_'+i+'_'+rnd(0,999),name:nm,cls:cls,emoji:EMOJIS[cls],
+        str:str,skillChance:sc2,hireCost:cost,hired:true,desc:desc,eq:{}});
+    }
+    G.tavernPool=pool;
+  }
+  const avail=G.tavernPool.filter(m=>!G.party.some(p=>p.id===m.id));
+  const partyFull=G.party.length>=6;
+  sc('<div class="ei">🍺</div><div class="et">술집 — 동료 모집</div>'+
+     '<div class="st">마석: <span class="hl">'+G.ess+'</span> | 파티: <b>'+G.party.length+'</b>/6명'+
+     (partyFull?'<br><span style="color:var(--red)">파티가 가득 찼습니다!</span>':'')+
+     (!avail.length?'<br><span style="color:var(--muted)">오늘은 더 이상 없습니다.</span>':'')+'</div>');
+  const btns=avail.map(m=>{
+    const canHire=!partyFull&&G.ess>=m.hireCost;
+    return {text:m.emoji+' '+m.name+' [STR:'+m.str+'] '+m.desc+' — '+m.hireCost+'마석',
+      cls:canHire?'bs':'bd',
+      fn:()=>{
+        if(partyFull){log('파티가 가득 찼습니다! (최대 6명)','lw');return;}
+        if(G.ess<m.hireCost){log('마석이 부족합니다.','lw');return;}
+        G.ess-=m.hireCost;
+        G.party.push(m);
+        log(m.emoji+' '+m.name+' 고용! ('+m.hireCost+'마석)','ls');
+        ui();showTavern();
+      }
+    };
+  });
+  btns.push({text:'← 마을로',cls:'bd',fn:showVillage});
+  sa(btns);
+}
+function showVillage(){
+  saveGame();
+  if(!G.shopEq){
+    // Show current floor and next floor items only
+    const mf=G.maxFloor||G.floor;const lo=Math.max(1,mf-1);const hi=Math.min(mf,8);
+    const pool=Object.entries(EQ_ITEMS).filter(([id,it])=>!it.boss&&!it.crack&&it.floor>=lo&&it.floor<=hi);
+    const shuffled=[...pool];
+    for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+    G.shopEq={norm:shuffled.slice(0,8),prem:[]};
+  }
+  const FLOOR_NAMES=['','수정동굴','짐승소굴','순례자의 길','천공의 탑','대마경','대해','암흑대륙','여명의 땅'];
+  const fname=FLOOR_NAMES[G.floor]||G.floor+'층';
+  sc(
+    '<div class="ei">🏰</div>'+
+    '<div class="et">라프도니아</div>'+
+    '<div class="st">'+
+    '<span style="color:var(--muted);font-size:.78em;font-style:italic">수천 년 전 마녀의 저주가 대륙을 황폐화시켰을 때, 라프도니아만이 홀로 그 재앙에서 살아남은 최후의 성채다. 왕가는 굶주린 시민들을 살리기 위해 이차원의 통로 — 던전 앤 스톤을 개통했고, 이 성채는 미궁 탐험의 유일한 거점이 되었다.</span><br><br>'+
+    '<span style="color:var(--muted);font-size:.8em">🏯 '+fname+' 인접 탐험 거점</span>&nbsp;&nbsp;보유 마석: <span class="hl">'+G.ess+'</span>'+
+    (G.party.length?'<br><span style="color:var(--muted);font-size:.82em">동료: '+G.party.map(m=>m.emoji+m.name).join(', ')+'</span>':'')+
+    '</div>'
+  );
+  sa([
+    {text:'🛒 상점 — 장비 구매',cls:'bs',fn:()=>showVillageShop('norm')},
+    {text:'⛩ 성지 — 각인 강화',cls:'bs',fn:showVillageShrine},
+    {text:'🗼 마탑 — 시약 구매',cls:'bs',fn:showVillageTower},
+    {text:'🏨 여관 — 체력 회복',cls:'bs',fn:showVillageInn},
+    {text:'🍺 술집 — 동료 모집',cls:'bs',fn:showTavern},
+    ...(G.party.length?[{text:'👥 동료 상태',cls:'bs',fn:()=>showCompUpgrade(showVillage)}]:[]),
+    {text:'⚔ 탐험 시작 ▶',cls:'bp',fn:floorIntro},
+  ]);
+}
+function showVillageInn(){
+  const cost=G.floor*2+rnd(3,8);
+  const full=G.p.hp>=G.p.mhp;
+  const missing=G.p.mhp-G.p.hp;
+  sc(
+    '<div class="ei">🏨</div><div class="et">여관</div>'+
+    '<div class="st">'+
+    '"어서오세요, 용사님. 오늘 밤 편히 쉬어가시겠어요?"<br><br>'+
+    'HP: <span style="color:var(--red)">'+G.p.hp+' / '+G.p.mhp+'</span>'+
+    (full?'<br><span style="color:var(--green)">이미 체력이 가득합니다!</span>':
+     '<br><span style="color:var(--muted);font-size:.82em">숙박비: <b style="color:var(--gold)">'+cost+'마석</b> | HP <b>+'+missing+'</b> 전부 회복</span>')+
+    '</div>'
+  );
+  if(full){
+    sa([{text:'← 마을로',cls:'bd',fn:showVillage}]);
+  } else {
+    sa([
+      {text:'🛏 숙박 ('+cost+'마석) — HP 전량 회복',cls:'bp',
+        fn:()=>{
+          if(G.ess<cost){log('마석이 부족합니다.','lw');showVillageInn();return;}
+          G.ess-=cost;const h=G.p.mhp-G.p.hp;G.p.hp=G.p.mhp;
+          log('🏨 여관에서 숙박. HP +'+h+' 전량 회복 (마석 -'+cost+')','lh');
+          ui();showVillage();
+        },dis:G.ess<cost},
+      {text:'← 마을로',cls:'bd',fn:showVillage},
+    ]);
+  }
+}
+function _eqTableRows(list){
+  let rows='';
+  list.forEach(([id,it])=>{
+    const slot=EQ_SLOTS[it.slot];
+    const cur=G.eq[it.slot]?EQ_ITEMS[G.eq[it.slot]]:null;
+    const equipped=(G.eq[it.slot]===id);
+    const curTxt=cur&&!equipped?'<span style="color:var(--muted);font-size:.76em">현재: <b>'+cur.name+'</b><br>'+cur.desc+'</span>':'';
+    rows+='<tr style="'+(equipped?'opacity:.5;color:var(--muted)':'border-bottom:1px solid #222')+'">'+'<td style="padding:3px 2px">'+slot.emoji+' <b>'+it.name+'</b></td>'+'<td style="color:var(--gold);font-size:.78em;padding:3px 2px">'+it.desc+'</td>'+'<td style="font-size:.76em;padding:3px 4px;color:var(--muted)">'+curTxt+'</td>'+'<td style="color:var(--muted);white-space:nowrap;padding:3px 2px">'+it.price+'마석</td>'+'<td style="color:'+(equipped?'var(--green)':'var(--muted)')+'">'+(equipped?'✔장착':'')+'</td>'+'</tr>';
+  });
+  return rows;
+}
+function showVillageShop(tier){
+  const list=(G.shopEq&&G.shopEq.norm)||[];
+  const rows=_eqTableRows(list);
+  sc('<div class="ei">🛒</div><div class="et">상점</div><div class="st" style="text-align:left;max-width:600px">보유 마석: <span class="hl">'+G.ess+'</span><br><span style="color:var(--muted);font-size:.8em">'+(G.floor-1)+'~'+Math.min(G.floor,8)+'층 장비</span><br><br>'+(list.length?'<b style="color:var(--gold)">▸ 장비</b><table style="width:100%;font-size:.82em;border-collapse:collapse;line-height:2">'+rows+'</table>':'<span style="color:var(--muted)">구매 가능한 장비가 없습니다.</span>')+'</div>');
+  const eqBtns=list.filter(([id,it])=>G.eq[it.slot]!==id).map(([id,it])=>({text:EQ_SLOTS[it.slot].emoji+' '+it.name+' ('+it.price+'마석)',cls:'bs',fn:()=>buyEq(id,'norm'),dis:G.ess<it.price}));
+  sa([
+    ...eqBtns,
+    {text:'← 마을로',cls:'bd',fn:showVillage}
+  ]);
+}
+function showVillageShrine(){
+  sc(
+    '<div class="ei">⛩</div><div class="et">성지 — 각인</div>'+
+    '<div class="st" style="text-align:left;max-width:600px">보유 마석: <span class="hl">'+G.ess+'</span><br><br>'+
+    '<span style="color:var(--muted);font-size:.82em">각인은 구매할수록 비용이 증가합니다.</span><br><br>'+
+    '<table style="width:100%;font-size:.82em;border-collapse:collapse;line-height:2">'+
+    '<tr><td>⚔ 힘의 각인</td><td style="color:var(--gold)">STR+5</td><td style="color:var(--muted)">'+getEngravingPrice('str')+'마석</td><td style="font-size:.75em">'+getAwkLabel('str')+'</td></tr>'+
+    '<tr><td>🛡 철의 각인</td><td style="color:var(--gold)">DEF+3</td><td style="color:var(--muted)">'+getEngravingPrice('def')+'마석</td><td style="font-size:.75em">'+getAwkLabel('def')+'</td></tr>'+
+    '<tr><td>🔮 마법 보호막 각인</td><td style="color:var(--gold)">MDEF+4</td><td style="color:var(--muted)">'+getEngravingPrice('mdef')+'마석</td><td style="font-size:.75em">'+getAwkLabel('mdef')+'</td></tr>'+
+    '</table>'+
+    '<div style="font-size:.75em;color:var(--muted);margin-top:8px;line-height:1.7">'
+    +'<b style="color:var(--gold)">각성 조건:</b> 3회=1차 / 6회=2차 / 9회=3차 (각 20% 발동)<br>'
+    +'⚔ 힘: 공격 시 ×2/×3/×4 &nbsp;|&nbsp; 🛡 철: 일반피해 50/75/100% 차단<br>'
+    +'🔮 마법: 마법피해 50/75/100% 차단'
+    +'</div></div>'
+  );
+  sa([
+    {text:'⚔ 힘의 각인 ('+getEngravingPrice('str')+'마석)',cls:'bs',fn:()=>buyFsSt(),dis:G.ess<getEngravingPrice('str')},
+    {text:'🛡 철의 각인 ('+getEngravingPrice('def')+'마석)',cls:'bs',fn:()=>buyFsDf(),dis:G.ess<getEngravingPrice('def')},
+    {text:'🔮 마법 보호막 각인 ('+getEngravingPrice('mdef')+'마석)',cls:'bs',fn:()=>buyFsMdf(),dis:G.ess<getEngravingPrice('mdef')},
+    {text:'← 마을로',cls:'bd',fn:showVillage},
+  ]);
+}
+function showVillageTower(){
+  sc(
+    '<div class="ei">🗼</div><div class="et">마탑 — 시약</div>'+
+    '<div class="st" style="text-align:left;max-width:600px">보유 마석: <span class="hl">'+G.ess+'</span>'+
+    ' | 현재 HP: <span style="color:var(--red)">'+G.p.hp+'/'+G.p.mhp+'</span><br><br>'+
+    '<table style="width:100%;font-size:.82em;border-collapse:collapse;line-height:2">'+
+    '<tr><td>🧪 소형 물약</td><td style="color:var(--gold)">HP+200</td><td style="color:var(--muted)">40마석</td><td style="color:var(--muted)">보유 '+G.inv.hp_s.c+'개</td></tr>'+
+    '<tr><td>🍶 중형 물약</td><td style="color:var(--gold)">HP+1000</td><td style="color:var(--muted)">120마석</td><td style="color:var(--muted)">보유 '+G.inv.hp_m.c+'개</td></tr>'+
+    '<tr><td>🏺 대형 물약</td><td style="color:var(--gold)">HP+3000</td><td style="color:var(--muted)">330마석</td><td style="color:var(--muted)">보유 '+G.inv.hp_l.c+'개</td></tr>'+
+    '<tr><td>💢 분노 결정</td><td style="color:var(--gold)">분노+30</td><td style="color:var(--muted)">25마석</td><td style="color:var(--muted)">보유 '+G.inv.ess_c.c+'개</td></tr>'+
+    '<tr><td>⛺ 텐트</td><td style="color:var(--gold)">야영 HP 30%↑</td><td style="color:var(--muted)">330마석</td><td style="color:var(--muted)">보유 '+G.inv.tent.c+'개</td></tr>'+
+    '<tr><td>🔥 모닥불 키트</td><td style="color:var(--gold)">야영 HP 전량+분노+30</td><td style="color:var(--muted)">800마석</td><td style="color:var(--muted)">보유 '+G.inv.campfire.c+'개</td></tr>'+
+    '</table></div>'
+  );
+  sa([
+    {text:'🧪 소형 물약 (40마석) — HP+200',cls:'bs',fn:()=>buyFS('hp_s',40),dis:G.ess<40},
+    {text:'🍶 중형 물약 (120마석) — HP+1000',cls:'bs',fn:()=>buyFS('hp_m',120),dis:G.ess<120},
+    {text:'🏺 대형 물약 (330마석) — HP+3000',cls:'bs',fn:()=>buyFS('hp_l',330),dis:G.ess<330},
+    {text:'💢 분노 결정 (25마석)',cls:'bs',fn:()=>buyFS('ess_c',25),dis:G.ess<25},
+    {text:'⛺ 텐트 (330마석)',cls:'bs',fn:()=>buyFS('tent',330),dis:G.ess<330},
+    {text:'🔥 모닥불 키트 (800마석)',cls:'bs',fn:()=>buyFS('campfire',800),dis:G.ess<800},
+    {text:'← 마을로',cls:'bd',fn:showVillage},
+  ]);
+}
+function showFloorShop(){showVillage();}
+function buyEq(id,_tier){
+  const it=EQ_ITEMS[id];if(!it||G.ess<it.price)return;
+  G.ess-=it.price;
+  if(!G.party.length){equipItem(id);ui();showVillageShop(_tier);return;}
+  showBuyEqChoice(id,_tier);
+}
+function compPowerGain(item){
+  // STR + DEF×0.5 + MDEF×0.5 + 특수 패시브당 +2
+  let s=(item.str||0)+Math.floor((item.def||0)*0.5)+Math.floor((item.mdef||0)*0.5);
+  let pc=0;if(item.ps_bonus)pc++;if(item.rage_bonus)pc++;if(item.rage_regen)pc++;
+  s+=pc*2;
+  return Math.max(1,s);
+}
+function compEssGain(ess){
+  // 정수 흡수 시 동료 STR 증가량: passives 스탯 기반
+  const p=ess.passives||{};
+  let s=(p.str||0)+Math.floor((p.def||0)*0.5)+Math.floor((p.mdef||0)*0.5)+Math.floor((p.hp||0)*0.05);
+  return Math.max(1,s);
+}
+function compEssProc(m,tgt){
+  // 동료 공격 후 보유 정수 패시브/액티브 발동
+  const ids=(G.compEss&&G.compEss[m.id])||[];
+  if(!ids.length||!tgt||tgt.hp<=0)return;
+  const alive=livingE();
+  ids.forEach(eid=>{
+    const ess=ESSENCES[eid];if(!ess)return;
+    const ef=ess.effect;const v=Math.round((ess.val||0)*100);
+    // 공격 패시브 효과
+    const _eln='['+ess.emoji+(ess.name||eid)+']';
+    if(ef==='toxic'&&rnd(1,100)<=v&&tgt.hp>0){
+      addEnemyStatusTo(tgt,'poison');log(m.emoji+' '+_eln+' ☠ '+tgt.name+' 중독!','lw');}
+    if((ef==='chain'||ef==='gush_boss')&&rnd(1,100)<=v){
+      const cd=Math.max(1,Math.floor(m.str*0.5));
+      alive.filter(e=>e.hp>0).forEach(en=>{en.hp-=cd;});
+      log(m.emoji+' '+_eln+' 연쇄 광역 '+cd+'!','lp');}
+    if(ef==='spider_boss'&&rnd(1,100)<=v&&tgt.hp>0){
+      tgt.stunned=true;log(m.emoji+' '+_eln+' 💜 '+tgt.name+' 마비!','lw');}
+    if(ef==='frost_boss'&&rnd(1,100)<=v&&tgt.hp>0){
+      addEnemyStatusTo(tgt,'freeze');log(m.emoji+' '+_eln+' ❄ '+tgt.name+' 빙결!','lw');}
+    if(ef==='sentinel_boss'&&rnd(1,100)<=v&&tgt.hp>0){
+      const sd=Math.max(1,Math.floor(m.str*0.7));tgt.hp-=sd;
+      log(m.emoji+' '+_eln+' 🛡 방어무시 '+sd+' 추가 피해!','lp');}
+    if(ef==='void'&&rnd(1,100)<=30&&tgt.hp>0){
+      const vd=Math.max(1,Math.floor(m.str*0.6));tgt.hp-=vd;
+      log(m.emoji+' '+_eln+' 💀 외피관통 '+vd+'!','lp');}
+    if(ef==='dragon_boss'&&rnd(1,100)<=v&&tgt.hp>0){
+      const dd=Math.max(1,Math.floor(m.str*0.4));tgt.hp-=dd;
+      G.p.hp=Math.min(G.p.mhp,G.p.hp+dd);log(m.emoji+' '+_eln+' 🩸 흡혈 HP +'+dd+'!','lh');}
+    // 액티브 스킬: 5% 확률 광역
+    if(ess.skill&&rnd(1,100)<=5){
+      const aoeD=Math.max(1,Math.floor(m.str*1.0));
+      const skName=ACTIVE_SKILLS[ess.skill]?ACTIVE_SKILLS[ess.skill].name:ess.name;
+      alive.filter(e=>e.hp>0).forEach(en=>{en.hp-=aoeD;});
+      log(m.emoji+' ['+skName+'!] 전체 '+aoeD+' 광역 공격!','lpa');}
+  });
+}
+function showBuyEqChoice(id,_tier){
+  const it=EQ_ITEMS[id];const slot=EQ_SLOTS[it.slot];
+  let html='<div class="et">'+slot.emoji+' '+it.name+' 획득!</div>';
+  html+='<div class="st"><span style="color:var(--gold)">'+it.desc+'</span><br><br>누구에게 줄까요?</div>';
+  sc(html);
+  const cur=G.eq[it.slot]?EQ_ITEMS[G.eq[it.slot]]:null;
+  const btns=[{text:'⚔ 비요른에게 장착'+(cur?' (현재: '+cur.name+')':''),cls:'bp',fn:()=>{equipItem(id);ui();showVillageShop(_tier);}}];
+  G.party.forEach(m=>{
+    if(!m.eq)m.eq={};
+    const gain=compPowerGain(it);
+    const oldId=m.eq[it.slot];
+    const oldItem=oldId?EQ_ITEMS[oldId]:null;
+    const oldGain=oldItem?compPowerGain(oldItem):0;
+    const label=oldItem?'교체: '+oldItem.name+' → '+it.name+' (STR '+(gain-oldGain>=0?'+':'')+(gain-oldGain)+')':it.name+' (STR +'+gain+')';
+    btns.push({text:m.emoji+' '+m.name+' — '+label,cls:'bs',
+      fn:()=>{
+        if(!m.eq)m.eq={};
+        if(oldItem){m.str=Math.max(0,(m.str||0)-oldGain);}
+        m.eq[it.slot]=id;m.str=(m.str||0)+gain;
+        m.donations=m.donations||[];m.donations.push(it.name);
+        log('🎁 '+it.name+' → '+m.name+(oldItem?' ('+oldItem.name+' 교체)':'')+' STR '+(gain-oldGain>=0?'+':'')+(gain-oldGain),'ls');
+        ui();showVillageShop(_tier);}});
+  });
+  sa(btns);
+}
+function buyFS(k,cost){
+  if(G.ess<cost)return;G.ess-=cost;G.inv[k].c++;
+  log(G.inv[k].emoji+' '+G.inv[k].name+' 구매 (마석 -'+cost+')','ls');
+  ui();showVillageTower();
+}
+function getAwkLevel(type){
+  const c=G.engravings[type]||0;
+  return c>=9?3:c>=6?2:c>=3?1:0;
+}
+function getAwkLabel(type){
+  const c=G.engravings[type]||0;
+  const lv=getAwkLevel(type);
+  const nm=['','각성1차','각성2차','각성3차'];
+  const cl=['','#c9a84c','#d4a0ff','#ff9966'];
+  const next=[3,6,9].find(n=>n>c);
+  const awakStr=lv>0?'<span style="color:'+cl[lv]+'">⟨'+nm[lv]+'⟩</span> ':'';
+  if(c===0)return '<span style="color:var(--muted)">미획득</span>';
+  return awakStr+(lv<3?'('+c+'/'+next+'회)':'<span style="color:'+cl[3]+'">★완성</span>');
+}
+function _checkAwk(type,name){
+  const lv=getAwkLevel(type);
+  if(lv>0&&[3,6,9].includes(G.engravings[type])){
+    const eff={'str':'공격 시 20% ×'+[2,3,4][lv-1],'def':'일반피해 20% '+[50,75,100][lv-1]+'% 차단','mdef':'마법피해 20% '+[50,75,100][lv-1]+'% 차단'};
+    log('🌟 ['+name+'] 각성'+lv+'차 달성! '+eff[type],'lw');
+  }
+}
+function getEngravingPrice(type){const base={str:150,def:120,mdef:100};return base[type]+(G.engravings[type]||0)*80;}
+function buyFsSt(){const p=getEngravingPrice('str');if(G.ess<p)return;G.ess-=p;G.p.str+=5;G.engravings.str=(G.engravings.str||0)+1;_checkAwk('str','힘의 각인');log('⚔ 힘의 각인 장착! STR +5 (다음 '+getEngravingPrice('str')+'마석)','ls');ui();showVillageShrine();}
+function buyFsDf(){const p=getEngravingPrice('def');if(G.ess<p)return;G.ess-=p;G.p.def+=3;G.engravings.def=(G.engravings.def||0)+1;_checkAwk('def','철의 각인');log('🛡 철의 각인 장착! DEF +3 (다음 '+getEngravingPrice('def')+'마석)','ls');ui();showVillageShrine();}
+function buyFsMdf(){const p=getEngravingPrice('mdef');if(G.ess<p)return;G.ess-=p;G.p.mdef+=4;G.engravings.mdef=(G.engravings.mdef||0)+1;_checkAwk('mdef','마법 보호막 각인');log('🔮 마법 보호막 각인! MDEF +4 (다음 '+getEngravingPrice('mdef')+'마석)','ls');ui();showVillageShrine();}
+function evTreasure(){
+  const drops=['hp_s','hp_s','hp_m','ess_c','hp_l'];const k=drops[rnd(0,drops.length-1)];
+  G.inv[k].c++;log('보물: '+G.inv[k].emoji+' '+G.inv[k].name+' 획득','ls');ui();
+  sc('<div class="ei">💰</div><div class="et">보물 발견!</div><div class="st">'+G.inv[k].emoji+' <span class="hl">'+G.inv[k].name+'</span>을(를) 발견했다!</div>');
+  sa([{text:'계속',cls:'bp',fn:nextEv}]);
+}
+function evTrap(){
+  const d=rnd(15,40);G.p.hp=Math.max(1,G.p.hp-d);log('함정: '+d+' 피해','lr');ui();
+  sc('<div class="ei">⚠</div><div class="et">함정!</div><div class="st">바닥에 숨겨진 함정을 밟았다!<br><span class="hl">'+d+' 피해</span>를 입었다.</div>');
+  sa([{text:'계속',cls:'bp',fn:nextEv}]);
+}
+function evRest(){
+  const h=rnd(30,60);G.p.hp=Math.min(G.p.mhp,G.p.hp+h);log('휴식: HP +'+h,'ls');ui();
+  sc('<div class="ei">🔥</div><div class="et">휴식소</div><div class="st">모닥불 앞에서 상처를 치료했다.<br>HP <span class="hl">+'+h+'</span> 회복</div>');
+  sa([{text:'계속',cls:'bp',fn:nextEv}]);
+}
+function applyME(monster){
+  const essId=ME[monster.name];if(!essId)return;
+  G.pendingEssences.push(essId); // 드랍 제한 없음, 중복 흡수만 방지
+}
+function offerNextEssence(afterFn){
+  if(!G.pendingEssences.length){if(afterFn)afterFn();return;}
+  const essId=G.pendingEssences.shift();
+  G._afterEss=afterFn;
+  const ess=ESSENCES[essId];if(!ess){offerNextEssence(afterFn);return;}
+  const full=G.runes.length>=G.runeSlots;
+  let html='<div class="ei">'+ess.emoji+'</div><div class="et">정수 발견!</div>';
+  html+='<div class="st"><b style="color:var(--gold)">'+ess.name+'</b><br>'+ess.desc+'</div>';
+  if(full)html+='<div style="color:var(--muted);font-size:.83em;margin-top:6px">슬롯 가득 ('+G.runes.length+'/'+G.runeSlots+')<br>교체할 정수를 선택하거나 버리세요.</div>';
+  sc(html);
+  const btns=[];
+  const alreadyHave=G.runes.includes(essId);
+  if(!full&&!alreadyHave){
+    btns.push({text:'⚔ 비요른에게 장착 — '+ess.name,cls:'bp',fn:()=>{equipRune(essId,null);offerNextEssence(G._afterEss);}});
+  }else if(alreadyHave&&!full){
+    btns.push({text:'⚔ 이미 보유 중 — '+ess.name,cls:'bd',fn:()=>{},dis:true});
+  }else{
+    G.runes.forEach((rid,idx2)=>{
+      const re2=ESSENCES[rid];
+      btns.push({text:'교체: '+re2.emoji+' '+re2.name+' → '+ess.emoji+' '+ess.name,cls:'bs',
+        fn:()=>{equipRune(essId,idx2);offerNextEssence(G._afterEss);}});
+    });
+  }
+  G.party.forEach(m=>{
+    {
+      const compHas=(G.compEss&&G.compEss[m.id]&&G.compEss[m.id].includes(essId));
+      const _ceg=compEssGain(ess);
+      const _atkEff=['toxic','chain','gush_boss','spider_boss','frost_boss','sentinel_boss','void','dragon_boss'];
+      const _hasAtk=_atkEff.includes(ess.effect);
+      const _lbl=(_hasAtk?'패시브+':'')+'STR +'+_ceg+(ess.skill?' +액티브5%':'');
+      btns.push({text:'🤝 '+m.emoji+m.name+(compHas?' (이미 보유)':' ('+_lbl+')'),
+        cls:compHas?'bd':'bs',dis:compHas,
+        fn:compHas?()=>{}:()=>{
+          if(!G.compEss)G.compEss={};
+          if(!G.compEss[m.id])G.compEss[m.id]=[];
+          G.compEss[m.id].push(essId);
+          m.str=(m.str||0)+_ceg;
+          log(m.name+'이(가) '+ess.emoji+' '+ess.name+' 정수를 흡수! STR +'+_ceg+(_hasAtk?' + 공격 패시브':'')+(ess.skill?' + 액티브 스킬':''),'ls');
+          offerNextEssence(G._afterEss);
+        }});
+    }
+  });
+  btns.push({text:'🗑 버리기',cls:'bd',fn:()=>{log('정수 버렸: '+ess.name,'lw');offerNextEssence(G._afterEss);}});
+  sa(btns);
+}
+function equipRune(essId,replaceIdx){
+  const ess=ESSENCES[essId];
+  if(replaceIdx!==null&&replaceIdx!==undefined){
+    const old=ESSENCES[G.runes[replaceIdx]];
+    if(old){unapplyRuneEffect(old);log('정수 제거: '+old.name,'lw');}
+    G.runes[replaceIdx]=essId;
+  } else {
+    G.runes.push(essId);
+  }
+  applyRuneEffect(ess);
+  log('✨ 정수 장착: '+ess.emoji+' '+ess.name+' — '+ess.desc,'lw');
+  ui();
+}
+function applyRuneEffect(ess){
+  // Apply passive stat bonuses
+  if(ess.passives){
+    if(ess.passives.str){G.p.str+=ess.passives.str;}
+    if(ess.passives.def){G.p.def+=ess.passives.def;}
+    if(ess.passives.mdef){G.p.mdef+=ess.passives.mdef;}
+    if(ess.passives.hp){G.p.mhp+=ess.passives.hp;G.p.hp=Math.min(G.p.mhp,G.p.hp+ess.passives.hp);}
+  }
+  // Legacy stat effects (sentinel/guardian direct def bonus)
+  if(ess.effect==='sentinel'&&!ess.passives?.def&&ess.def)G.p.def+=ess.def;
+  if(ess.effect==='guardian'&&!ess.passives?.def&&ess.def)G.p.def+=ess.def;
+  if(ess.effect==='guardian'&&!ess.passives?.mdef&&ess.mdef)G.p.mdef+=ess.mdef;
+  // Grant active skill
+  if(ess.skill&&!G.skills.includes(ess.skill)){
+    G.skills.push(ess.skill);
+    const sk=ACTIVE_SKILLS[ess.skill];
+    if(sk)log('⚔ 스킬 습득: ['+sk.name+'] '+sk.desc,'ls');
+  }
+  log('정수 효과 적용: '+ess.name,'ls');
+}
+function unapplyRuneEffect(ess){
+  if(ess.passives){
+    if(ess.passives.str)G.p.str-=ess.passives.str;
+    if(ess.passives.def)G.p.def-=ess.passives.def;
+    if(ess.passives.mdef)G.p.mdef-=ess.passives.mdef;
+    if(ess.passives.hp){G.p.mhp-=ess.passives.hp;G.p.hp=Math.min(G.p.hp,G.p.mhp);}
+  }
+  if(ess.effect==='sentinel'&&!ess.passives?.def&&ess.def)G.p.def-=ess.def;
+  if(ess.effect==='guardian'&&!ess.passives?.def&&ess.def)G.p.def-=ess.def;
+  if(ess.effect==='guardian'&&!ess.passives?.mdef&&ess.mdef)G.p.mdef-=ess.mdef;
+  if(ess.skill)G.skills=G.skills.filter(s=>s!==ess.skill);
+}
+function hasRune(effectId){return G.runes.some(r=>ESSENCES[r]&&ESSENCES[r].effect===effectId);}
+function hasEq(id){return Object.values(G.eq).includes(id);}
+function applyEqStats(item,m){
+  if(item.str)G.p.str+=item.str*m;
+  if(item.def)G.p.def+=item.def*m;
+  if(item.mdef)G.p.mdef+=item.mdef*m;
+  if(item.hp){G.p.mhp+=item.hp*m;if(m>0)G.p.hp=Math.min(G.p.mhp,G.p.hp+item.hp);}
+
+}
+function equipItem(id){
+  const item=EQ_ITEMS[id];if(!item)return;
+  const old=G.eq[item.slot];
+  if(old)applyEqStats(EQ_ITEMS[old],-1);
+  G.eq[item.slot]=id;
+  applyEqStats(item,1);
+  const slotName=EQ_SLOTS[item.slot].name;
+  log('🔧 ['+slotName+'] '+item.name+' 장착! ('+item.desc+')','ls');
+  ui();
+}function addPlayerStatus(id){
+  const def=STATUS_DEF[id];if(!def)return;
+  G.pStatus=G.pStatus.filter(s=>s.id!==id);
+  G.pStatus.push({id,name:def.name,emoji:def.emoji,turns:def.turns});
+  if(id==='freeze')G.pFrozen=true;
+}
+function processPlayerStatus(){
+  let died=false;
+  G.pStatus=G.pStatus.map(s=>{
+    const def=STATUS_DEF[s.id];
+    if(s.id==='poison'){const d=Math.floor(G.p.mhp*def.pct);G.p.hp-=d;log('☠ 독 피해: '+d,'lr');if(G.p.hp<=0)died=true;}
+    else if(s.id==='burn'){G.p.hp-=def.dmg;log('🔥 화상 피해: '+def.dmg,'lr');if(G.p.hp<=0)died=true;}
+    else if(s.id==='bleed'){const d=Math.floor(G.p.mhp*def.pct);G.p.hp-=d;log('🩸 출혈 피해: '+d,'lr');if(G.p.hp<=0)died=true;}
+    s.turns--;return s;
+  }).filter(s=>s.turns>0);
+  if(died){gameOver();return true;}
+  return false;
+}
+function checkLevelUp(){
+  if((G.exp||0)<(G.nextLevelExp||50))return false;
+  G.level++;G.sp+=(3+G.level*2);
+  const thresholds=[30,60,120,210,330,480,660,870,2999];
+  G.nextLevelExp=thresholds[Math.min(G.level-1,thresholds.length-1)]||9999;
+  const newSlots=Math.min(G.level,8);
+  if(newSlots>G.runeSlots){G.runeSlots=newSlots;log('✨ 정수 슬롯 '+G.runeSlots+'칸으로 확장!','lw');}
+  log('★ 레벨 업! Lv.'+G.level+' — 스탯 포인트 5 획득!','lw');
+  G._battleBeforeLevelup=(G.phase==='battle');
+  showLevelUp();return true;
+}
+function showCompUpgrade(cb){
+  const back=cb||showVillage;
+  if(!G.party.length){
+    sc('<div class="ei">👥</div><div class="et">동료 없음</div><div class="st">현재 파티에 동료가 없습니다.</div>');
+    sa([{text:'← 돌아가기',cls:'bd',fn:back}]);return;
+  }
+  let html='<div class="ei">👥</div><div class="et">동료 강화</div>';
+  G.party.forEach(m=>{
+    const _sc=(m.id==='erwen'||m.id==='raven')?(G.maxFloor||1)*20:0;
+    const _eff=(m.str||0)+_sc;
+    const _scNote=_sc>0?' <span style="color:#60a5fa;font-size:.75em">(기본'+(m.str||0)+'+층보정'+_sc+')</span>':'';
+    const ess=(G.compEss&&G.compEss[m.id])||[];
+    const essStr=ess.length?' <span style="color:#818cf8;font-size:.8em">'+ess.map(id=>{const e=ESSENCES[id];return e?e.emoji:id;}).join('')+'</span>':'';
+    html+='<div style="background:#111;border:1px solid var(--border);border-radius:5px;padding:6px 10px;margin:4px auto;max-width:420px;text-align:left;display:flex;align-items:center;gap:8px">';
+    html+='<span style="font-size:1.6em">'+m.emoji+'</span>';
+    const _npc=NPC.find(n=>n.id===m.id);
+    const _desc=(_npc?_npc.desc:'')||(m.desc||'');
+    html+='<div><div style="color:var(--gold);font-weight:bold;font-size:.9em">'+m.name+' <span style="color:var(--muted);font-size:.75em">['+m.cls+']</span></div>';
+    html+='<div style="color:#aaa;font-size:.8em">STR <b style="color:var(--gold)">'+_eff+'</b>'+_scNote+essStr+'</div>';
+    if(_desc)html+='<div style="color:#94a3b8;font-size:.74em;margin-top:2px;">'+_desc+'</div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  sc(html);
+  const btns=[];
+  if(G.runes.length>0) btns.push({text:'🔮 정수 증여',cls:'bs',fn:()=>_cuEssStep1(back)});
+  if(Object.entries(G.eq).some(([,id])=>id)) btns.push({text:'🗡 장비 이전',cls:'bs',fn:()=>_cuEqStep1(back)});
+  btns.push({text:'← 돌아가기',cls:'bd',fn:back});
+  sa(btns);
+}
+function _cuEssStep1(back){
+  sc('<div class="ei">🔮</div><div class="et">정수 선택</div><div class="st">비요른의 정수 목록입니다. 누구에게 줄 정수를 고르세요.</div>');
+  const btns=G.runes.map((rid,idx)=>{
+    const re=ESSENCES[rid];
+    const _reg=re?compEssGain(re):1;
+    return {text:(re?re.emoji+' '+re.name:rid)+'  →  STR +'+_reg+(re&&re.skill?' +스킬5%':''),
+      cls:'bs',fn:()=>_cuEssStep2(rid,idx,back)};
+  });
+  btns.push({text:'← 취소',cls:'bd',fn:()=>showCompUpgrade(back)});
+  sa(btns);
+}
+function _cuEssStep2(rid,idx,back){
+  const re=ESSENCES[rid];
+  sc('<div class="ei">🔮</div><div class="et">'+(re?re.emoji+' '+re.name:rid)+'</div><div class="st">누구에게 줄 것인지 선택하세요.</div>');
+  const btns=G.party.map(m=>{
+    const has=(G.compEss&&G.compEss[m.id]||[]).includes(rid);
+    const _reg=re?compEssGain(re):1;
+    const _eff=(m.id==='erwen'||m.id==='raven')?((m.str||0)+(G.maxFloor||1)*20):(m.str||0);
+    return {text:m.emoji+' '+m.name+' (STR '+_eff+')'+(has?' — 이미 보유':' → +'+_reg),
+      cls:has?'bd':'bp',dis:has,fn:has?()=>{}:()=>{
+        G.runes.splice(idx,1);
+        if(!G.compEss)G.compEss={};
+        if(!G.compEss[m.id])G.compEss[m.id]=[];
+        G.compEss[m.id].push(rid);
+        m.str=(m.str||0)+_reg;
+        log('🔮 '+m.name+' ← '+(re?re.emoji+re.name:rid)+' STR +'+_reg,'ls');
+        ui();showCompUpgrade(back);
+      }};
+  });
+  btns.push({text:'← 취소',cls:'bd',fn:()=>_cuEssStep1(back)});
+  sa(btns);
+}
+function _cuEqStep1(back){
+  const equipped=Object.entries(G.eq).filter(([,id])=>id);
+  sc('<div class="ei">🗡</div><div class="et">장비 선택</div><div class="st">비요른의 장착 장비 목록입니다. 이전할 장비를 고르세요.</div>');
+  const btns=equipped.map(([sl,id])=>{
+    const it=EQ_ITEMS[id];if(!it)return null;
+    const gain=compPowerGain(it);
+    return {text:EQ_SLOTS[sl].emoji+' '+it.name+'  →  STR +'+gain,cls:'bs',fn:()=>_cuEqStep2(sl,id,back)};
+  }).filter(x=>x);
+  btns.push({text:'← 취소',cls:'bd',fn:()=>showCompUpgrade(back)});
+  sa(btns);
+}
+function _cuEqStep2(sl,id,back){
+  const it=EQ_ITEMS[id];if(!it){showCompUpgrade(back);return;}
+  const gain=compPowerGain(it);
+  sc('<div class="ei">🗡</div><div class="et">'+EQ_SLOTS[sl].emoji+' '+it.name+'</div><div class="st">누구에게 이전할지 선택하세요.</div>');
+  const btns=G.party.map(m=>{
+    if(!m.eq)m.eq={};
+    const oldId=m.eq[sl];const oldIt=oldId?EQ_ITEMS[oldId]:null;
+    const oldGain=oldIt?compPowerGain(oldIt):0;
+    const diff=gain-oldGain;
+    const _eff=(m.id==='erwen'||m.id==='raven')?((m.str||0)+(G.maxFloor||1)*20):(m.str||0);
+    return {text:m.emoji+' '+m.name+' (STR '+_eff+')'+(oldIt?' 교체:'+oldIt.name:'')+'  '+(diff>=0?'+':'')+diff,
+      cls:'bp',fn:()=>{
+        applyEqStats(it,-1);G.eq[sl]=null;
+        if(!m.eq)m.eq={};
+        if(oldIt)m.str=Math.max(0,(m.str||0)-oldGain);
+        m.eq[sl]=id;m.str=(m.str||0)+gain;
+        m.donations=m.donations||[];m.donations.push(it.name);
+        log('🗡 '+it.name+' → '+m.name+(oldIt?' ('+oldIt.name+' 교체)':'')+' STR '+(diff>=0?'+':'')+diff,'ls');
+        ui();showCompUpgrade(back);
+      }};
+  });
+  btns.push({text:'← 취소',cls:'bd',fn:()=>_cuEqStep1(back)});
+  sa(btns);
+}
+function showLevelUp(){
+  G.phase='levelup';
+  sc('<div class="ei">★</div><div class="et">레벨 업! Lv.'+G.level+'</div><div class="st">스탯 포인트: <span class="hl">'+G.sp+'</span><br>능력치를 배분하세요.</div>');
+  sa([
+    {text:'힘 +2 (STR)',cls:'bs',fn:()=>spendSP('str')},
+    {text:'방어 +2 (DEF)',cls:'bs',fn:()=>spendSP('def')},
+    {text:'마법방어 +2 (MDEF)',cls:'bs',fn:()=>spendSP('mdef')},
+    {text:'체력 +20 (MaxHP)',cls:'bs',fn:()=>spendSP('hp')},
+    {text:'정수 +10 (MaxES)',cls:'bs',fn:()=>spendSP('es')},
+  ]);
+}
+function spendSP(stat){
+  if(!G.sp)return;G.sp--;
+  if(stat==='str'){G.p.str+=2;log('STR +2','ls');}
+  else if(stat==='def'){G.p.def+=2;log('DEF +2','ls');}
+  else if(stat==='mdef'){G.p.mdef+=2;log('MDEF +2','ls');}
+  else if(stat==='hp'){G.p.mhp+=20;G.p.hp=Math.min(G.p.mhp,G.p.hp+20);log('MaxHP +20','ls');}
+  else if(stat==='es'){G.p.mes+=10;G.p.es=Math.min(G.p.mes,G.p.es+10);log('MaxES +10','ls');}
+  ui();
+  if(G.sp>0){showLevelUp();return;}
+  // If we leveled up mid-battle, resume the battle
+  if(G._battleBeforeLevelup){
+    G._battleBeforeLevelup=false;
+    G.phase='battle';
+    renderBattle();return;
+  }
+  G.phase='explore';
+  if(G.isBoss){showBossClearChoice(G.floor);return;}
+  // 균열 보스 클리어 후 레벨업 복귀
+  if(G._crackVictory){const cv=G._crackVictory;G._crackVictory=null;if(checkLevelUp())return;showCrackVictory(cv);return;}
+  // 균열 일반 방 레벨업 후 복귀
+  if(G.inCrack){if(checkLevelUp())return;if(G.autoBattle){setTimeout(crackNextRoom,300);return;}ui();sc('<div onclick="crackNextRoom()" style="cursor:pointer">'
+  +'<div class="ei">⚔</div><div class="et">전투 승리!</div>'
+  +'<div class="st">스탯 배분 완료!<br>'
+  +'<span style="color:var(--muted);font-size:.78em">─ 탭하여 계속 ─</span></div>'
+  +'</div>');sa([]);return;}
+  if(checkLevelUp())return; // 연쇄 레벨업 처리
+  const _sw=()=>{
+    if(G.autoBattle){setTimeout(nextEv,300);return;}
+    sc('<div onclick="nextEv()" style="cursor:pointer">'
+      +'<div class="ei">⚔</div><div class="et">전투 승리!</div>'
+      +'<div class="st">스탯 배분 완료!<br>'
+      +'<span style="color:var(--muted);font-size:.78em">─ 탭하여 계속 ─</span></div>'
+      +'</div>');
+    sa(G.party.length?[{text:'⚔ 동료 강화',cls:'bs',fn:()=>showCompUpgrade(_sw)}]:[]);
+  };
+  _sw();
+}
+function skCharge(){
+  if(G.p.rage<45||G.phase!=='battle')return;
+  G.p.rage-=45;
+  const e=te();if(!e)return;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  // 3회 연속 타격 (각 120%)
+  let total=0;
+  for(let i=0;i<3;i++){
+    let d=dmg(Math.floor(atkStr*1.2),e.def);d=applyStrAwk(d);
+    e.hp-=d;total+=d;
+  }
+  // 마지막 타격에 1턴 스턴
+  if(e.hp>0){e.stunned=1;log('[돌진] '+e.name+' 기절!','lp');}
+  log('[돌진] '+e.name+' 3연타 '+total+' 피해','lp');
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+function gameOver(){
+  G.phase='dead';clearSave();log('━━━━━ 전투 불능 ━━━━━','lr');ui();
+  sc('<div class="ei">💀</div><div class="et">전투 불능</div><div class="st">비요른은 쓰러졌다...<br>미궁의 어둠 속에 묻혔다.</div>');
+  E('go').classList.add('act');sa([]);
+}
+function gameClear(){
+  G.phase='clear';log('━━━━━ 미궁 클리어! ━━━━━','lw');ui();
+  sc('<div class="ei">🏆</div><div class="et">미궁 클리어!</div><div class="st">심층왕을 쓰러뜨리고 미궁의 심장부에서<br>마침내 빠져나왔다!<br><br>처치: <span class="hl">'+G.kills+'</span>마리 | 마석: <span class="hl">'+G.ess+'</span></div>');
+  E('cl').classList.add('act');sa([]);
+}
+function skWhirl(){
+  if(G.p.rage<50||G.phase!=='battle')return;
+  G.p.rage-=50;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  const voidRune=G.runes.find(r=>r&&ESSENCES[r]&&ESSENCES[r].effect==='void');
+  let total=0;
+  G.enemies.filter(e=>e.hp>0).forEach(e=>{
+    const defVal=voidRune?Math.floor(e.def*(1-ESSENCES[voidRune].val)):e.def;
+    let d=dmg(Math.floor(atkStr*1.0),defVal);d=applyStrAwk(d);
+    e.hp-=d;total+=d;
+  });
+  log('[회오리베기] 전체 적에게 '+total+' 총 피해!','lp');
+  checkDeaths();ui();
+  if(allDead()){win();return;}
+  partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+function skCombo(){
+  if(G.p.rage<45||G.phase!=='battle')return;
+  G.p.rage-=45;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  let atkStr=sr?Math.floor(G.p.str*2):G.p.str;
+  if(hasEq('axe_4')&&G.p.hp>=G.p.mhp*0.9)atkStr=Math.floor(atkStr*1.5);
+  const tc=te();if(!tc)return;
+  if(tc.hp<=tc.maxHp*0.30&&!G.isBoss){
+    tc.hp=0;log('[야성분출] '+tc.name+' 즉사!','lp');
+  }else{
+    let d=dmg(atkStr*2.5,tc.def);d=applyStrAwk(d);
+    tc.hp-=d;log('[처형] '+tc.name+'에게 '+d+' 피해!','lp');
+  }
+  checkDeaths();partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+function skBlood(){
+  if(G.phase!=='battle')return;
+  const cost=Math.floor(G.p.mhp*0.25);
+  if(G.p.hp<=cost)return;
+  G.p.hp-=cost;
+  G.p.rage=Math.min(100,G.p.rage+80);
+  log('[흡혈송곳] HP '+cost+' 소모 → 분노 +80!','lw');
+  ui();partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+function skSlam(){
+  if(G.p.rage<25||G.phase!=='battle')return;
+  G.p.rage-=25;
+  const sr=G.buffs.find(b=>b.id==='sr');
+  const atkStr=sr?Math.floor(G.p.str*1.5):G.p.str;
+  const ts=te();if(!ts)return;
+  let d=dmg(atkStr*2,ts.def);d=applyStrAwk(d);
+  ts.hp-=d;ts.stunned=true;
+  log('[대지 강타] '+ts.name+'에게 '+d+' 피해 + 스턴!','lp');
+  checkDeaths();partyAtk();checkDeaths();if(allDead()){win();return;}pickTarget();eTurn();
+}
+// ── 페이지 로드 시 세이브 체크 ──
+(function(){
+  try{
+    const sv=localStorage.getItem(SV_KEY);
+    if(!sv)return;
+    const d=JSON.parse(sv);
+    const wrap=document.getElementById('sv-wrap');
+    if(wrap)wrap.style.display='block';
+    const info=document.getElementById('sv-info');
+    if(info)info.textContent='저장: '+_svLabel(d);
+    // '탐험 시작' 버튼 텍스트도 바꾸기
+    const nb=document.getElementById('btn-newgame');
+    if(nb)nb.textContent='새 게임 시작 ▶';
+  }catch(e){}
+})();
+// ── 창 닫기/새로고침 시 자동 저장 ──
+window.addEventListener('beforeunload',function(){
+  if(G&&(G.phase==='explore'))saveGame();
+});
+</script></body></html>

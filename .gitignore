@@ -1,0 +1,14 @@
+# 백업 파일
+*_bak_*.html
+*_bak*.html
+barbarian_rpg - 복사본.html
+
+# 패치 스크립트 (개발용)
+fix_*.py
+add_*.py
+
+# 임시 파일
+*.js
+recovered_*.js
+temp_*.js
+tmp_*.js
