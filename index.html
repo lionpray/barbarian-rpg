@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사자와 어린양 프로젝트 — 출판 기획 제안서</title>
+<style>
+  :root {
+    --ink: #1c1a17;
+    --ink-soft: #4a463f;
+    --line: #e3ddd2;
+    --paper: #f7f4ee;
+    --paper-card: #fffdf9;
+    --accent: #9a5b34;
+    --accent-soft: #c98b5e;
+    --gold: #b08d44;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    padding: 96px 24px 72px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(176,141,68,0.12), transparent 60%),
+      var(--paper);
+  }
+  .hero .kicker {
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    line-height: 1.25;
+    margin: 0 0 18px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .hero .subtitle {
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin: 0 0 36px;
+  }
+  .hero .lede {
+    max-width: 540px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+  }
+  .ornament {
+    width: 56px;
+    height: 1px;
+    background: var(--accent-soft);
+    margin: 40px auto 0;
+    position: relative;
+  }
+  .ornament::before {
+    content: "❧";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent-soft);
+    background: var(--paper);
+    padding: 0 12px;
+    font-size: 1.1rem;
+  }
+
+  /* ---------- Section ---------- */
+  section { padding: 64px 0; border-bottom: 1px solid var(--line); }
+  .label {
+    font-size: 0.78rem;
+    letter-spacing: 0.28em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin: 0 0 28px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  h3 { font-size: 1.2rem; margin: 0 0 8px; font-weight: 700; }
+  p { margin: 0 0 18px; }
+  .muted { color: var(--ink-soft); }
+
+  /* one-liner pitch */
+  .pitch {
+    font-size: clamp(1.15rem, 3.2vw, 1.45rem);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--ink);
+    border-left: 3px solid var(--accent-soft);
+    padding-left: 24px;
+    margin: 0 0 28px;
+  }
+
+  /* meta grid */
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .meta div {
+    background: var(--paper-card);
+    padding: 20px 22px;
+  }
+  .meta dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .meta dd { margin: 0; font-weight: 600; }
+
+  /* reader chips */
+  .readers { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .readers li {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+    position: relative;
+    padding-left: 44px;
+  }
+  .readers li::before {
+    content: "›";
+    position: absolute;
+    left: 20px;
+    top: 14px;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+
+  /* TOC */
+  .toc { list-style: none; padding: 0; margin: 0; counter-reset: ch; }
+  .toc > li {
+    counter-increment: ch;
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 8px 18px;
+    align-items: start;
+  }
+  .toc > li:first-child { border-top: none; }
+  .toc .num {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .toc .num::before { content: counter(ch, decimal-leading-zero); }
+  .toc h3 { grid-column: 2; }
+  .toc .gloss { grid-column: 2; color: var(--ink-soft); margin: 0; }
+
+  /* preview blockquote */
+  .preview {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 36px 34px;
+  }
+  .preview p { color: var(--ink-soft); }
+  .preview .strong { color: var(--ink); font-weight: 600; }
+  .preview .cite {
+    margin: 24px 0 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* steps */
+  .steps { display: grid; gap: 14px; }
+  .step {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 22px 18px 60px;
+    position: relative;
+  }
+  .step .n {
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step strong { display: block; font-size: 1.02rem; }
+
+  /* closing */
+  .closing {
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(176,141,68,0.12), transparent 60%),
+      var(--paper);
+  }
+  .closing .pitch {
+    border: none;
+    padding: 0;
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 8px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 48px 24px 64px;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+  footer .brand { font-weight: 700; color: var(--ink); }
+
+  @media (max-width: 520px) {
+    .hero { padding: 64px 20px 52px; }
+    section { padding: 48px 0; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="kicker">출판 기획 제안서</div>
+      <h1>사자와 어린양 프로젝트</h1>
+      <p class="subtitle">사람을 살리는 시스템에 관하여</p>
+      <p class="lede">강한 사람과 약한 사람은 어떻게 서로를 망치지 않고 함께 성장할 수 있을까. 한 공동체가 수년간 넘어지고 다시 일어서며 찾아낸, 사람을 포기하지 않는 질서에 대한 기록.</p>
+      <div class="ornament"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section id="concept">
+      <div class="label">기획 의도</div>
+      <h2>좋은 마음만으로는 사람을 자라게 할 수 없었다</h2>
+      <p class="pitch">본성은 자리를 만나 역할이 되고,<br>역할은 경계를 만나 책임이 된다.</p>
+      <p class="muted">강한 사람이 더 감당하면 될 줄 알았다. 함께 있어 서로를 망친다면 떨어뜨리면 될 줄 알았다. 본성을 보고 자리를 주면 될 줄 알았다. 이 책은 그 세 번의 시도가 왜 충분하지 않았는지, 그리고 그 실패들을 통과해 도달한 <strong>경계</strong>라는 답에 대한 이야기다.</p>
+      <p class="muted">‘시스템이 있어야 한다’는 말은 누구나 한다. 하지만 같은 규칙이라도 어떤 인간 이해 위에 세워졌느냐에 따라 사람을 통제하는 장치가 되기도, 사람을 살리는 질서가 되기도 한다. 이 책은 그 차이를 실제 공동체의 시행착오로 증명한다.</p>
+    </section>
+
+    <section id="meta">
+      <div class="label">기획 개요</div>
+      <h2>한눈에 보기</h2>
+      <dl class="meta">
+        <div><dt>분야</dt><dd>에세이 · 조직/공동체 · 리더십</dd></div>
+        <div><dt>형식</dt><dd>경험 기반 사유 에세이 + 실천 부록</dd></div>
+        <div><dt>분량 구성</dt><dd>머릿말 · 본문 4장 · 맺음말 · 부록 7스텝</dd></div>
+        <div><dt>핵심 키워드</dt><dd>본성 · 역할 · 경계 · 월권</dd></div>
+        <div><dt>바탕</dt><dd>공동체 ‘마법의딸기’ 운영 경험</dd></div>
+        <div><dt>톤</dt><dd>고백적이고 따뜻하되, 단단한 사유</dd></div>
+      </dl>
+    </section>
+
+    <section id="readers">
+      <div class="label">이런 분께</div>
+      <h2>누가 이 책을 필요로 하는가</h2>
+      <ul class="readers">
+        <li>강한 사람의 희생에 기대지 않는 조직을 만들고 싶은 리더와 운영자</li>
+        <li>팀원을 ‘바꾸려다’ 지친 적 있는 매니저</li>
+        <li>약한 사람을 보호하는 것과 자라게 하는 것 사이에서 고민하는 사람</li>
+        <li>규칙은 많은데 왜 사람이 살아나지 않는지 묻는 공동체</li>
+        <li>좋은 사람으로 남고 싶어 경계 세우기를 미뤄 온 모든 리더</li>
+      </ul>
+    </section>
+
+    <section id="toc">
+      <div class="label">차례</div>
+      <h2>본문 구성</h2>
+      <ol class="toc">
+        <li>
+          <span class="num"></span>
+          <h3>노블레스 오블리주</h3>
+          <p class="gloss">강한 사람이 더 감당하면 될 줄 알았다. 하지만 그것은 약한 사람을 자라게 하지 못했다.</p>
+        </li>
+        <li>
+          <span class="num"></span>
+          <h3>분리</h3>
+          <p class="gloss">함께 있어 서로를 망친다면 떨어뜨리면 될 줄 알았다. 하지만 양은 행복해지지 않았고, 사자는 의미를 잃었다.</p>
+        </li>
+        <li>
+          <span class="num"></span>
+          <h3>역할</h3>
+          <p class="gloss">본성을 보고 자리를 주면 될 줄 알았다. 하지만 역할만 있고 경계가 없으면, 본성은 월권으로 흐른다.</p>
+        </li>
+        <li>
+          <span class="num"></span>
+          <h3>경계</h3>
+          <p class="gloss">역할에는 경계가 필요하다. 그 경계는 사람을 가두는 선이 아니라, 각자의 본성이 서로를 해치지 않고 기여가 되도록 돕는 질서다.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="preview">
+      <div class="label">본문 미리보기 · 머릿말</div>
+      <h2>사자와 어린양이 함께 뛰노는 세계를 꿈꾸며</h2>
+      <div class="preview">
+        <p>나는 오랫동안 하나의 문제를 붙들고 살아왔다. 강한 사람과 약한 사람은 어떻게 함께 살아갈 수 있을까. 기준이 높은 사람과 아직 그 기준에 닿지 못한 사람은 어떻게 서로를 망치지 않고 함께 성장할 수 있을까.</p>
+        <p class="strong">사자와 어린양이 함께 뛰노는 세계. 그것은 사자를 양으로, 양을 사자로 만드는 세계가 아니다. 각자가 자기 본성으로 살아가되, 그 본성이 서로를 해치지 않고 살리는 역할이 되는 세계다.</p>
+        <p>이 책은 그 길 위에 남기는 이정표다. 혹시 비슷한 질문을 붙들고 있다면, 적어도 이런 말은 건넬 수 있을 것 같다. 우리의 삽질은 헛되지 않았다. 사람을 포기하지 않으려는 시도는, 언젠가 철학이 된다.</p>
+        <p class="cite">— 그리고, 이 이야기에는 악역이 없다</p>
+      </div>
+    </section>
+
+    <section id="appendix">
+      <div class="label">부록 · 그래서 어쩌라고?</div>
+      <h2>몇 년의 삽질을 압축한 속성 탐험 지도</h2>
+      <p class="muted">‘실행 가이드’가 아니라, 같은 길을 걷는 사람이 우리의 시행착오를 빠르게 통과하도록 돕는 일곱 개의 스텝.</p>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><strong>사자는 사자고, 양은 양이다</strong><span class="muted">시작은 교정이 아니라 관찰이다.</span></div>
+        <div class="step"><span class="n">2</span><strong>본성과 능력은 다르다</strong><span class="muted">능력은 기능이고, 본성은 방향이다.</span></div>
+        <div class="step"><span class="n">3</span><strong>본성은 자리를 만나 기여가 된다</strong><span class="muted">문제는 본성이 아니라, 본성이 놓인 자리다.</span></div>
+        <div class="step"><span class="n">4</span><strong>역할은 명확하게 정의되어야 한다</strong><span class="muted">자기 역할을 모르면 본성대로 움직인다.</span></div>
+        <div class="step"><span class="n">5</span><strong>역할에는 경계가 필요하다</strong><span class="muted">경계는 가두는 선이 아니라 자유의 조건이다.</span></div>
+        <div class="step"><span class="n">6</span><strong>월권은 신호다</strong><span class="muted">악의가 아니라, 본성·역할·경계의 어긋남이다.</span></div>
+        <div class="step"><span class="n">7</span><strong>리더에게도 경계가 필요하다</strong><span class="muted">리더는 대신 사는 사람이 아니라 질서를 세우는 사람이다.</span></div>
+      </div>
+    </section>
+
+  </main>
+
+  <section class="closing">
+    <div class="wrap">
+      <div class="label">맺으며</div>
+      <p class="pitch">사람을 살리는 시스템과 사람을 죽이는 시스템은 다르다. 그리고 사람을 살리는 시스템에는 반드시 사람에 대한 철학이 담겨 있어야 한다.</p>
+      <p class="muted">그 시작은 누군가를 악역으로 만들지 않는 데서 시작된다.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><span class="brand">사자와 어린양 프로젝트</span> — 사람을 살리는 시스템에 관하여</p>
+    <p class="muted">공동체 ‘마법의딸기’의 기록 · 출판 기획 제안서</p>
+  </footer>
+
+</body>
+</html>
