@@ -1637,7 +1637,6 @@ function win(){
       G._crackVictory=null;showCrackVictory(_crackType);
     };
     const _rcb=()=>{if(G.pendingBossItems&&G.pendingBossItems.length){offerBossItem(_acb);}else{_acb();}};
-    if(G.autoBattle){_acb();return;}
     if(G.pendingEssences.length>0){offerNextEssence(_rcb);return;}
     _rcb();return;
   }
@@ -1659,7 +1658,6 @@ function win(){
       E('sb').style.cursor='pointer';
       E('sb').onclick=(ev)=>{if(ev.target.tagName!=='BUTTON'){E('sb').onclick=null;E('sb').style.cursor='';crackNextRoom();}};
     };
-    if(G.autoBattle){_awr();return;}
     if(G.pendingEssences.length>0){offerNextEssence(_awr);return;}
     _awr();return;
   }
@@ -1697,8 +1695,8 @@ function win(){
     if(G.pendingBossItems&&G.pendingBossItems.length){offerBossItem(runAfterWin);return;}
     afterWin();
   };
-  // 자동전투 중 비보스: 정수/아이템 처리 건너뛰고 즉시 진행 (보스 처치 후 일괄 처리)
-  if(G.autoBattle){afterWin();return;}
+  // 정수는 드랍 즉시 지급한다. 자동전투 중이면 선택 화면에서 잠시 멈췄다가
+  // 선택이 끝나면 afterWin()이 자동 진행을 다시 예약한다.
   if(G.pendingEssences.length>0){offerNextEssence(runAfterWin);return;}
   runAfterWin();
 }
@@ -2321,7 +2319,21 @@ function applyME(monster){
   const essId=ME[monster.name];if(!essId)return;
   G.pendingEssences.push(essId); // 드랍 제한 없음, 중복 흡수만 방지
 }
+// 비요른이 이미 장착했고 동료도 전원 흡수한 정수는 남은 선택지가 '버리기'뿐이다.
+// (정수는 중복 드랍되지만 흡수는 1인 1회라 이런 상황이 자주 생긴다.)
+function essRedundant(essId){
+  if(!ESSENCES[essId])return true;
+  if(!G.runes.includes(essId))return false;
+  return G.party.every(m=>G.compEss&&G.compEss[m.id]&&G.compEss[m.id].includes(essId));
+}
 function offerNextEssence(afterFn){
+  // 매 선택마다 다시 판정한다 — 같은 정수가 여러 개 떴을 때
+  // 동료들에게 하나씩 나눠준 뒤 남는 잉여분만 정리되도록.
+  while(G.pendingEssences.length&&essRedundant(G.pendingEssences[0])){
+    const _sk=G.pendingEssences.shift();
+    const _se=ESSENCES[_sk];
+    if(_se)log('✨ '+_se.name+' 정수 — 전원 보유 중이라 자동 정리','lw');
+  }
   if(!G.pendingEssences.length){if(afterFn)afterFn();return;}
   const essId=G.pendingEssences.shift();
   G._afterEss=afterFn;
@@ -2330,6 +2342,7 @@ function offerNextEssence(afterFn){
   let html='<div class="ei">'+ess.emoji+'</div><div class="et">정수 발견!</div>';
   html+='<div class="st"><b style="color:var(--gold)">'+ess.name+'</b><br>'+ess.desc+'</div>';
   if(full)html+='<div style="color:var(--muted);font-size:.83em;margin-top:6px">슬롯 가득 ('+G.runes.length+'/'+G.runeSlots+')<br>교체할 정수를 선택하거나 버리세요.</div>';
+  if(G.autoBattle)html+='<div style="color:var(--rage);font-size:.78em;margin-top:6px">⚡ 선택하면 자동전투가 이어집니다</div>';
   sc(html);
   const btns=[];
   const alreadyHave=G.runes.includes(essId);
@@ -2339,10 +2352,12 @@ function offerNextEssence(afterFn){
     btns.push({text:'⚔ 이미 보유 중 — '+ess.name,cls:'bd',fn:()=>{},dis:true});
   }else{
     G.runes.forEach((rid,idx2)=>{
+      if(rid===essId)return; // 같은 정수로의 교체는 무의미
       const re2=ESSENCES[rid];
       btns.push({text:'교체: '+re2.emoji+' '+re2.name+' → '+ess.emoji+' '+ess.name,cls:'bs',
         fn:()=>{equipRune(essId,idx2);offerNextEssence(G._afterEss);}});
     });
+    if(alreadyHave)btns.push({text:'⚔ 이미 보유 중 — '+ess.name,cls:'bd',fn:()=>{},dis:true});
   }
   G.party.forEach(m=>{
     {
