@@ -32,6 +32,9 @@ header .sub{color:var(--muted);font-size:.75em;margin-top:2px;}
 .pbw{flex:1;background:#111;border-radius:3px;height:8px;overflow:hidden;}
 .pbf{height:100%;background:linear-gradient(90deg,#1d8348,var(--green));border-radius:3px;transition:width .4s;}
 .pbt{color:var(--muted);font-size:.8em;white-space:nowrap;}
+.atg{background:#1c1c1c;color:var(--muted);border:1px solid var(--border);border-radius:12px;padding:3px 11px;font-size:.8em;font-family:inherit;font-weight:bold;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.atg:hover{filter:brightness(1.4);}
+.atg.on{background:var(--rage);color:#000;border-color:var(--rage);box-shadow:0 0 8px rgba(230,126,34,.5);}
 #sb{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 20px 16px;flex:1;min-height:320px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:center;position:relative;overflow:visible;}
 .ma{font-size:.72em;color:var(--red);line-height:1.3;margin-bottom:12px;font-family:monospace;white-space:pre;text-shadow:0 0 8px rgba(192,57,43,.6);}
 .mn{color:var(--red);font-size:1.3em;font-weight:bold;margin-bottom:4px;}
@@ -127,7 +130,7 @@ header .sub{color:var(--muted);font-size:.75em;margin-top:2px;}
     <div class="panel"><div class="pt">✨ 장착 정수 <span id="runeslotv" style="color:var(--muted);font-size:.8em">(1/1)</span></div><div id="runelist" style="font-size:.78em;color:var(--muted)">정수 없음</div></div>
   </div>
   <div id="cp">
-    <div id="fi"><span class="fb" id="flb">1층</span><div class="pbw"><div class="pbf" id="prf" style="width:0%"></div></div><span class="pbt" id="prt">0 / 6</span></div>
+    <div id="fi"><span class="fb" id="flb">1층</span><div class="pbw"><div class="pbf" id="prf" style="width:0%"></div></div><span class="pbt" id="prt">0 / 6</span><button class="atg" id="atg" onclick="toggleAuto()" title="자동전투 켜기/끄기 (단축키: A)">⚡ 자동 OFF</button></div>
     <div id="sb"><div class="rd" id="rdi"></div><div id="sc3"></div>
     <div id="skm"></div><div id="itm"></div><div id="ab"></div></div>
   </div>
@@ -708,8 +711,45 @@ function sc(h){E('sc3').innerHTML=h;}
 function sa(btns){
   E('ab').innerHTML='';E('skm').style.display='none';E('itm').style.display='none';
   btns.forEach(b=>{const btn=document.createElement('button');btn.className='btn '+(b.cls||'bs');btn.textContent=b.text;if(b.dis)btn.disabled=true;btn.onclick=b.fn;E('ab').appendChild(btn);});
+  updateAutoBtn();
 }
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+// ── 자동전투 토글 ──
+// 예약된 자동 행동은 항상 이 슬롯 하나만 사용한다.
+// (껐다 켰다를 빠르게 반복해도 타이머가 중복 쌓여 2연타가 나가지 않도록)
+let _autoT=null;
+function autoSched(fn,ms){if(_autoT)clearTimeout(_autoT);_autoT=setTimeout(()=>{_autoT=null;fn();},ms);}
+function autoCancel(){if(_autoT){clearTimeout(_autoT);_autoT=null;}}
+function updateAutoBtn(){
+  const b=E('atg');if(!b)return;
+  const on=!!(G&&G.autoBattle);
+  b.className='atg'+(on?' on':'');
+  b.textContent=on?'⚡ 자동 ON':'⚡ 자동 OFF';
+}
+function setAuto(on,quiet){
+  if(!G)return;
+  if(G.autoBattle===on){updateAutoBtn();return;}
+  G.autoBattle=on;
+  if(!quiet)log(on?'⚡ 자동전투 켜짐':'⚡ 자동전투 꺼짐','ls');
+  if(!on)autoCancel();
+  updateAutoBtn();
+  // 전투 중이면 즉시 다시 그린다 → 켜면 자동 공격 재개, 끄면 수동 버튼 복귀
+  if(G.phase==='battle'&&G.enemies.length&&te())renderBattle();
+}
+function toggleAuto(){if(G)setAuto(!G.autoBattle);}
+// 보스 처치 등에서 자동전투를 끊을 때 사용 (사유를 로그로 남김)
+function stopAuto(reason){
+  if(!G||!G.autoBattle)return;
+  G.autoBattle=false;autoCancel();updateAutoBtn();
+  log('⚡ 자동전투 해제 ('+reason+') — 상단 ⚡ 버튼으로 재개','ls');
+}
+document.addEventListener('keydown',e=>{
+  if(e.key!=='a'&&e.key!=='A')return;
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;
+  if(!G||E('is2').style.display!=='none')return;
+  toggleAuto();
+});
 // ── 세이브/로드 시스템 ──
 const SV_KEY='bjorn_save_v1';
 function saveGame(){
@@ -778,7 +818,7 @@ function floorIntro(){
   sc(_banner+'<div class="et">'+G.floor+'층: '+_floorName+'</div><div class="st">'+_floorDesc+'<br><br><span style="color:var(--muted);font-size:.85em">이 층에서 <span class="hl">'+G.total+'개</span>의 구역을 통과해야 차원문이 열린다.</span></div>');
   sa([
     {text:'탐험 시작 ▶',cls:'bp',fn:nextEv},
-    {text:'⚡ 자동전투로 시작',cls:'bs',fn:()=>{G.autoBattle=true;log('⚡ 자동전투 시작 — 보스 처치까지 자동 공격','ls');nextEv();}},
+    {text:'⚡ 자동전투로 시작',cls:'bs',fn:()=>{setAuto(true,true);log('⚡ 자동전투 시작 — 보스 처치까지 자동 공격','ls');nextEv();}},
   ]);
 }
 function nextEv(){
@@ -1053,18 +1093,19 @@ function renderBattle(){
   const _bfBar='<div style="min-height:46px;display:flex;flex-wrap:wrap;gap:3px;padding:3px 8px;font-size:.68em;align-content:flex-start;box-sizing:border-box">'+_bfItems.map(b=>'<span style="background:#1c1c2e;border:1px solid #333;border-radius:3px;padding:1px 5px;color:'+b.c+'">'+b.t+'</span>').join('')+'</div>';
   sc(_hudBar+_bfBar+cards);
   if(G.pFrozen){
-    if(G.autoBattle){G.pFrozen=false;setTimeout(()=>{if(G.phase==='battle'){partyAtk();checkDeaths();if(allDead()){win();return;}eTurn();if(G.phase==='battle')renderBattle();}},300);return;}
+    if(G.autoBattle){G.pFrozen=false;autoSched(()=>{if(G.phase==='battle'){partyAtk();checkDeaths();if(allDead()){win();return;}eTurn();if(G.phase==='battle')renderBattle();}},300);return;}
     sa([{text:'❄ 빙결 — 비요른 행동 불가 (동료 활동 중)',cls:'bd',fn:()=>{G.pFrozen=false;partyAtk();checkDeaths();if(!allDead()){eTurn();if(G.phase==='battle')renderBattle();}}}]);return;
   }
   if(G.autoBattle){
-    sa([{text:'⚡ 자동전투 중 — 탭하여 해제',cls:'bd',fn:()=>{G.autoBattle=false;log('⚡ 자동전투 해제','ls');renderBattle();}}]);
-    setTimeout(()=>{if(G.autoBattle&&G.phase==='battle')pAtk();},300);
+    sa([{text:'⚡ 자동전투 중 — 탭하여 해제',cls:'bd',fn:()=>setAuto(false)}]);
+    autoSched(()=>{if(G.autoBattle&&G.phase==='battle')pAtk();},300);
     return;
   }
   sa([
     {text:'공격',cls:'bp',fn:pAtk},
     {text:'스킬',cls:'bs',fn:()=>{const m=E('skm');m.style.display=m.style.display==='flex'?'none':'flex';}},
     {text:'아이템',cls:'bs',fn:()=>{const m=E('itm');m.style.display=m.style.display==='flex'?'none':'flex';}},
+    {text:'⚡ 자동전투',cls:'bf2',fn:()=>setAuto(true)},
   ]);
   renderSkillMenu();renderItemMenu();
 }
@@ -1589,7 +1630,7 @@ function win(){
     const cd=CRACK_DATA[_crackType];
     if(cd.essDrops){cd.essDrops.forEach(d=>{const key='crackE_'+_crackType+d.id;if(rnd(1,100)<=d.chance&&!G.absorbed[key]){G.absorbed[key]=true;G.pendingEssences.push(d.id);}});}
     if(cd.itemDrop&&rnd(1,100)<=cd.itemDrop.chance){G.pendingBossItems=G.pendingBossItems||[];G.pendingBossItems.push(cd.itemDrop.id);}
-    if(G.autoBattle){G.autoBattle=false;log('⚡ 자동전투 해제 (균열 보스 처치)','ls');}
+    stopAuto('균열 보스 처치');
     const _acb=()=>{
       if(G.sp>0){showLevelUp();return;}
       if(checkLevelUp())return;
@@ -1630,7 +1671,7 @@ function win(){
       if(bd.ess){bd.ess.forEach(d=>{if(rnd(1,100)<=d.chance){G.pendingEssences.push(d.id);}});}
       if(bd.item&&rnd(1,100)<=bd.item.chance){G.pendingBossItems=G.pendingBossItems||[];G.pendingBossItems.push(bd.item.id);}
     }
-    if(G.autoBattle){G.autoBattle=false;log('⚡ 자동전투 해제 (보스 처치)','ls');}
+    stopAuto('보스 처치');
   }
   const afterWin=()=>{
     // If level-up happened during last kill, SP is pending but checkLevelUp
