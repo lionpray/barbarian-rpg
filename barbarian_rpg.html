@@ -655,6 +655,60 @@ const EQ_ITEMS={
   crack_frost_ring:{name:'빙하굴 서리 반지', slot:'ring',   str:12,mdef:10,def:6, floor:3, price:900, crack:true, desc:'STR +12 MDEF +10 DEF +6'},
   crack_mine_helm: {name:'녹색 탄광 철 투구',slot:'helmet', def:18,hp:80,str:5,  floor:3, price:800, crack:true, desc:'DEF +18 MaxHP +80 STR +5'}
 };
+// ── 장비 비교 ──
+// 장비는 이름만 보고는 우열을 알 수 없다. 새 장비를 제안하는 화면마다
+// 현재 장비와 스탯별로 나란히 비교해서 보여준다.
+const EQ_STAT_DEFS=[
+  {k:'str',        n:'STR'},
+  {k:'def',        n:'DEF'},
+  {k:'mdef',       n:'MDEF'},
+  {k:'hp',         n:'MaxHP'},
+  {k:'ps_bonus',   n:'강타 피해', u:'%', mul:100},
+  {k:'rage_bonus', n:'공격 시 분노'},
+  {k:'rage_regen', n:'매 턴 분노'},
+  {k:'ess_bonus',  n:'정수 드랍', u:'%'},
+  {k:'ess_inc',    n:'마석 획득', u:'%'},
+];
+function eqStatVal(it,d){const v=it?(it[d.k]||0):0;return d.mul?Math.round(v*d.mul):v;}
+// 한 줄 요약: ▲STR+10 ▼DEF-3 (표를 넣기엔 좁은 목록용)
+function eqDeltaInline(newItem,curItem){
+  const parts=EQ_STAT_DEFS.map(d=>{
+    const diff=eqStatVal(newItem,d)-eqStatVal(curItem,d);
+    if(!diff)return '';
+    return '<span style="color:'+(diff>0?'var(--green)':'var(--red)')+'">'
+      +(diff>0?'▲':'▼')+d.n+(diff>0?'+':'')+diff+(d.u||'')+'</span>';
+  }).filter(Boolean);
+  return parts.length?parts.join(' '):'<span style="color:var(--muted)">변화 없음</span>';
+}
+// 현재 → 신규 대조표
+function eqCompareHtml(newItem,curItem){
+  const rows=EQ_STAT_DEFS.map(d=>{
+    const nv=eqStatVal(newItem,d),cv=eqStatVal(curItem,d);
+    if(!nv&&!cv)return '';
+    const diff=nv-cv;const u=d.u||'';
+    const col=diff>0?'var(--green)':diff<0?'var(--red)':'var(--muted)';
+    return '<tr>'
+      +'<td style="color:var(--muted);padding:1px 10px 1px 0;white-space:nowrap">'+d.n+'</td>'
+      +'<td style="text-align:right;color:var(--muted);padding:1px 6px">'+cv+u+'</td>'
+      +'<td style="color:#555;padding:1px 4px">→</td>'
+      +'<td style="text-align:right;color:var(--text);font-weight:bold;padding:1px 6px">'+nv+u+'</td>'
+      +'<td style="color:'+col+';padding:1px 0 1px 10px;white-space:nowrap">'
+        +(diff===0?'–':(diff>0?'▲ +':'▼ ')+diff+u)+'</td>'
+      +'</tr>';
+  }).join('');
+  if(!rows)return '';
+  return '<table style="margin:8px auto;font-size:.82em;border-collapse:collapse">'
+    +'<tr style="font-size:.85em;color:#666"><td></td>'
+    +'<td style="text-align:right;padding:0 6px">현재</td><td></td>'
+    +'<td style="text-align:right;padding:0 6px">신규</td><td></td></tr>'
+    +rows+'</table>';
+}
+// 현재 장착품 이름/설명 + 대조표를 한 덩어리로
+function eqCompareBlock(newItem,curItem,slotName){
+  return '<div style="color:var(--muted);font-size:.82em;margin-top:10px">현재 '+slotName+': <b style="color:'+(curItem?'var(--gold)':'#555')+'">'
+    +(curItem?curItem.name:'없음')+'</b>'+(curItem?'<br>'+curItem.desc:'')+'</div>'
+    +eqCompareHtml(newItem,curItem);
+}
 let G;
 function ig(){
   return{
@@ -703,8 +757,9 @@ function ui(){
   const eql=E('eql');eql.innerHTML='';
   Object.entries(EQ_SLOTS).forEach(([slot,def])=>{
     const eqId=G.eq[slot];const item=eqId?EQ_ITEMS[eqId]:null;
-    const d=document.createElement('div');d.className='is';
-    d.innerHTML='<span style="color:var(--muted)">'+def.emoji+' '+def.name+'</span><span class="ic" style="color:'+(item?'var(--gold)':'#555')+'">'+(item?item.name:'—')+'</span>';
+    const d=document.createElement('div');d.className='is';d.style.display='block';
+    d.innerHTML='<div style="display:flex;justify-content:space-between;gap:6px"><span style="color:var(--muted)">'+def.emoji+' '+def.name+'</span><span class="ic" style="color:'+(item?'var(--gold)':'#555')+'">'+(item?item.name:'—')+'</span></div>'
+      +(item?'<div style="color:var(--muted);font-size:.72em;line-height:1.35;margin-top:2px">'+item.desc+'</div>':'');
     eql.appendChild(d);
   });
 }
@@ -1710,8 +1765,8 @@ function offerBossItem(cb){
   const cur=G.eq[item.slot]?EQ_ITEMS[G.eq[item.slot]]:null;
   let html='<div class="ei">🎁</div><div class="et">보스 전리품!</div>';
   html+='<div class="st"><b style="color:var(--gold)">'+slot.emoji+' '+item.name+'</b><br>';
-  html+='<span style="color:var(--muted);font-size:.85em">'+item.desc+'</span><br>';
-  if(cur)html+='<br><span style="color:var(--muted);font-size:.82em">현재 장착: <b>'+cur.name+'</b> — '+cur.desc+'</span>';
+  html+='<span style="color:var(--muted);font-size:.85em">'+item.desc+'</span>';
+  html+=eqCompareBlock(item,cur,slot.name);
   html+='</div>';
   sc(html);
   const btns=[];
@@ -2126,7 +2181,7 @@ function _eqTableRows(list){
     const slot=EQ_SLOTS[it.slot];
     const cur=G.eq[it.slot]?EQ_ITEMS[G.eq[it.slot]]:null;
     const equipped=(G.eq[it.slot]===id);
-    const curTxt=cur&&!equipped?'<span style="color:var(--muted);font-size:.76em">현재: <b>'+cur.name+'</b><br>'+cur.desc+'</span>':'';
+    const curTxt=equipped?'':'<span style="font-size:.82em;line-height:1.5"><span style="color:var(--muted)">현재: <b>'+(cur?cur.name:'없음')+'</b></span><br>'+eqDeltaInline(it,cur)+'</span>';
     rows+='<tr style="'+(equipped?'opacity:.5;color:var(--muted)':'border-bottom:1px solid #222')+'">'+'<td style="padding:3px 2px">'+slot.emoji+' <b>'+it.name+'</b></td>'+'<td style="color:var(--gold);font-size:.78em;padding:3px 2px">'+it.desc+'</td>'+'<td style="font-size:.76em;padding:3px 4px;color:var(--muted)">'+curTxt+'</td>'+'<td style="color:var(--muted);white-space:nowrap;padding:3px 2px">'+it.price+'마석</td>'+'<td style="color:'+(equipped?'var(--green)':'var(--muted)')+'">'+(equipped?'✔장착':'')+'</td>'+'</tr>';
   });
   return rows;
@@ -2247,10 +2302,12 @@ function compEssProc(m,tgt){
 }
 function showBuyEqChoice(id,_tier){
   const it=EQ_ITEMS[id];const slot=EQ_SLOTS[it.slot];
-  let html='<div class="et">'+slot.emoji+' '+it.name+' 획득!</div>';
-  html+='<div class="st"><span style="color:var(--gold)">'+it.desc+'</span><br><br>누구에게 줄까요?</div>';
-  sc(html);
   const cur=G.eq[it.slot]?EQ_ITEMS[G.eq[it.slot]]:null;
+  let html='<div class="et">'+slot.emoji+' '+it.name+' 획득!</div>';
+  html+='<div class="st"><span style="color:var(--gold)">'+it.desc+'</span>'
+    +eqCompareBlock(it,cur,slot.name)
+    +'<br>누구에게 줄까요?</div>';
+  sc(html);
   const btns=[{text:'⚔ 비요른에게 장착'+(cur?' (현재: '+cur.name+')':''),cls:'bp',fn:()=>{equipItem(id);ui();showVillageShop(_tier);}}];
   G.party.forEach(m=>{
     if(!m.eq)m.eq={};
